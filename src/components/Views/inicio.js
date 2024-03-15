@@ -1,8 +1,17 @@
 import React from 'react'
+import '../../styles/styles.css'
+
 
 const inicio = () => {
   return (
-    <div>inicio de rap rumble</div>
+    <div>
+      <div>
+        inicio de rap rumble
+      </div>
+      <div>
+        hola
+      </div>
+    </div>
   )
 }
 
