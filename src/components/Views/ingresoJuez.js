@@ -2,8 +2,16 @@ import React from "react";
 import '../../styles/styles.css'
 import bg from '../../media/bg.png'
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-function ingresoJuez() {
+function IngresoJuez() {
+
+  const navigate = useNavigate();
+
+  const ButtonRoute = (route) => {
+    navigate(route);
+  };
+
   return (
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill'}}>
       <div className='flex min-w-1/4 min-h-[65%] items-center flex-col my-auto py-7 border-4 rounded-3xl border-black bg-white'>
@@ -30,7 +38,7 @@ function ingresoJuez() {
               placeholder="Contraseña"
             />
           </div>
-          <button className="rounded-xl bg-verde hover:bg-verdesito w-3/5 self-center text-white p-3 h-auto">
+          <button onClick={() => ButtonRoute('/inicio_batalla')} className="rounded-xl bg-verde hover:bg-verdesito w-3/5 self-center text-white p-3 h-auto">
             <span>Ingresar</span>
           </button>
         </div>
@@ -39,4 +47,4 @@ function ingresoJuez() {
   )
 }
 
-export default ingresoJuez
+export default IngresoJuez
