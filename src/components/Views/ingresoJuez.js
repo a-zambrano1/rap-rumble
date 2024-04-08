@@ -17,7 +17,7 @@ function ingresoJuez() {
             </span>
             <span className="flex justify-start self-start">Ingreso de Juez</span>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center gap-4">
             <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
             id="idJuez"
             placeholder="A.K.A del Juez"
