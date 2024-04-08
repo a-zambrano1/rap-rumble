@@ -1,9 +1,9 @@
 import React from 'react'
 
-function modalResultado() {
+function ModalResultado() {
   return (
     <div>modalResultado</div>
   )
 }
 
-export default modalResultado
+export default ModalResultado
