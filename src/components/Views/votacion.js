@@ -72,7 +72,26 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
     "mc1": {
       "button1": 0,
       "button2": 0,
-      "button3": 0,        
+      "button3": 0,
+      "button4": 0,
+      "button5": 0,
+      "button6": 0
+    },
+    "mc2": {
+      "button1": 0,
+      "button2": 0,
+      "button3": 0,
+      "button4": 0,
+      "button5": 0,
+      "button6": 0
+    }
+  })
+
+  const [libreValues, setLibreValues] = useState({
+    "mc1": {
+      "button1": 0,
+      "button2": 0,
+      "button3": 0,
       "button4": 0,
       "button5": 0,
       "button6": 0
@@ -101,6 +120,12 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
     setRandomValues(newRandom)
   }
 
+  const handle4x4 = (mc, button, newValue) => {
+    let new4x4 = { ...libreValues }
+    new4x4[`mc${mc}`][`button${button}`] += newValue
+    handlePuntaje(mc, newValue)
+    setLibreValues(new4x4)
+  }
   useEffect(() => {
     if (location.state !== null) {
       notify("success", "Datos cargados correctamente")
@@ -115,7 +140,7 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
     // eslint-disable-next-line
   }, [location.state])
 
-  const handlePuntaje = (mc, value ) => {
+  const handlePuntaje = (mc, value) => {
     if (mc === 1) {
       let newValue = mc1pts + value
       setMc1pts(newValue)
@@ -144,7 +169,7 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
               </Step>
             ))}
           </Stepper>
-          <div style={{borderTop: "1px solid black",width:'100%'}}></div> 
+          <div style={{ borderTop: "1px solid black", width: '100%' }}></div>
           <TabPanel value={activeStep} index={0}>
             <div className='flex justify-around mx-5'>
               <div className='flex flex-col'> </div>
@@ -182,20 +207,20 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
                     <VoteButton count={
                       tematicaValues.tematica2.mc1.button1}
                       onVote={(e) => handleTematica(2, 1, 1, e)} />
-                    <VoteButton 
+                    <VoteButton
                       count={tematicaValues.tematica2.mc1.button2}
                       onVote={(e) => handleTematica(2, 1, 2, e)} />
-                    <VoteButton 
+                    <VoteButton
                       count={tematicaValues.tematica2.mc1.button3}
                       onVote={(e) => handleTematica(2, 1, 3, e)} />
                   </div>
                   <div className='flex flex-col gap-1'>
-                    <VoteButton  
+                    <VoteButton
                       count={tematicaValues.tematica2.mc2.button1}
                       onVote={(e) => handleTematica(2, 2, 1, e)} />
                     <VoteButton count={tematicaValues.tematica2.mc2.button2}
                       onVote={(e) => handleTematica(2, 2, 2, e)} />
-                    <VoteButton  count={tematicaValues.tematica2.mc2.button3}
+                    <VoteButton count={tematicaValues.tematica2.mc2.button3}
                       onVote={(e) => handleTematica(2, 2, 3, e)} />
                   </div>
                 </div>
@@ -212,20 +237,20 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
                 <label value="1" className='m-2 text-verde text-3xl'>Random Mode</label>
                 <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
-                    <VoteButton  count={randomValues.mc1.button1} onVote={(e)=> handleRandom(1,1,e)} />
-                    <VoteButton  count={randomValues.mc1.button2} onVote={(e)=> handleRandom(1,2,e)}/>
-                    <VoteButton  count={randomValues.mc1.button3} onVote={(e)=> handleRandom(1,3,e)}/>
-                    <VoteButton  count={randomValues.mc1.button4} onVote={(e)=> handleRandom(1,4,e)}/>
-                    <VoteButton  count={randomValues.mc1.button5} onVote={(e)=> handleRandom(1,5,e)}/>
-                    <VoteButton  count={randomValues.mc1.button6} onVote={(e)=> handleRandom(1,6,e)}/>
+                    <VoteButton count={randomValues.mc1.button1} onVote={(e) => handleRandom(1, 1, e)} />
+                    <VoteButton count={randomValues.mc1.button2} onVote={(e) => handleRandom(1, 2, e)} />
+                    <VoteButton count={randomValues.mc1.button3} onVote={(e) => handleRandom(1, 3, e)} />
+                    <VoteButton count={randomValues.mc1.button4} onVote={(e) => handleRandom(1, 4, e)} />
+                    <VoteButton count={randomValues.mc1.button5} onVote={(e) => handleRandom(1, 5, e)} />
+                    <VoteButton count={randomValues.mc1.button6} onVote={(e) => handleRandom(1, 6, e)} />
                   </div>
                   <div className='flex flex-col gap-1'>
-                    <VoteButton  count={randomValues.mc2.button1} onVote={(e)=> handleRandom(2,1,e)}/>
-                    <VoteButton  count={randomValues.mc2.button2} onVote={(e)=> handleRandom(2,2,e)}/>
-                    <VoteButton  count={randomValues.mc2.button3} onVote={(e)=> handleRandom(2,3,e)}/>
-                    <VoteButton  count={randomValues.mc2.button4} onVote={(e)=> handleRandom(2,4,e)}/>
-                    <VoteButton  count={randomValues.mc2.button5} onVote={(e)=> handleRandom(2,5,e)}/>
-                    <VoteButton  count={randomValues.mc2.button6} onVote={(e)=> handleRandom(2,6,e)}/>
+                    <VoteButton count={randomValues.mc2.button1} onVote={(e) => handleRandom(2, 1, e)} />
+                    <VoteButton count={randomValues.mc2.button2} onVote={(e) => handleRandom(2, 2, e)} />
+                    <VoteButton count={randomValues.mc2.button3} onVote={(e) => handleRandom(2, 3, e)} />
+                    <VoteButton count={randomValues.mc2.button4} onVote={(e) => handleRandom(2, 4, e)} />
+                    <VoteButton count={randomValues.mc2.button5} onVote={(e) => handleRandom(2, 5, e)} />
+                    <VoteButton count={randomValues.mc2.button6} onVote={(e) => handleRandom(2, 6, e)} />
                   </div>
                 </div>
               </div>
@@ -235,21 +260,48 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
             SANGRE
           </TabPanel>
           <TabPanel value={activeStep} index={3}>
-            <button value="3">HOLI</button>
-            <button value="3">3</button>
+            <div className='flex justify-around mx-5'>
+              <div className='flex flex-col'> </div>
+              <div className='flex flex-col'> </div>
+            </div>
+            <div className='flex flex-col justify-around'>
+              <div className='flex flex-col text-center w-full'>
+                <label value="1" className='m-2 text-verde text-3xl'>4x4 Libre</label>
+                <div className='flex gap-2 items-center justify-around'>
+                  <div className='flex flex-col gap-1'>
+                    <VoteButton count={libreValues.mc1.button1} onVote={(e) => handle4x4(1, 1, e)} />
+                    <VoteButton count={libreValues.mc1.button2} onVote={(e) => handle4x4(1, 2, e)} />
+                    <VoteButton count={libreValues.mc1.button3} onVote={(e) => handle4x4(1, 3, e)} />
+                    <VoteButton count={libreValues.mc1.button4} onVote={(e) => handle4x4(1, 4, e)} />
+                    <VoteButton count={libreValues.mc1.button5} onVote={(e) => handle4x4(1, 5, e)} />
+                    <VoteButton count={libreValues.mc1.button6} onVote={(e) => handle4x4(1, 6, e)} />
+                  </div>
+                  <div className='flex flex-col gap-1'>
+                    <VoteButton count={libreValues.mc2.button1} onVote={(e) => handle4x4(2, 1, e)} />
+                    <VoteButton count={libreValues.mc2.button2} onVote={(e) => handle4x4(2, 2, e)} />
+                    <VoteButton count={libreValues.mc2.button3} onVote={(e) => handle4x4(2, 3, e)} />
+                    <VoteButton count={libreValues.mc2.button4} onVote={(e) => handle4x4(2, 4, e)} />
+                    <VoteButton count={libreValues.mc2.button5} onVote={(e) => handle4x4(2, 5, e)} />
+                    <VoteButton count={libreValues.mc2.button6} onVote={(e) => handle4x4(2, 6, e)} />
+                  </div>
+                </div>
+              </div>
+            </div>
           </TabPanel>
           <TabPanel value={activeStep} index={4}>
-            <select id='selectJornada' className='text-[40px] border w-auto'>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-            </select>
+            En construccion ...
           </TabPanel>
           <TabPanel value={activeStep} index={5}>
-            RESULTADOS
+            <div>
+            {mc1pts}, {form.values.mc1}
+            </div>
+            <div>
+            {mc2pts}, {form.values.mc2}            
+            </div>
+            
           </TabPanel>
         </section>
-        <div style={{borderTop: "1px solid black",width:'100%'}}></div> 
+        <div style={{ borderTop: "1px solid black", width: '100%' }}></div>
         <section className='w-full text-center'>
           <span className=''>Puntajes</span>
           <section className='flex justify-between mx-5'>
