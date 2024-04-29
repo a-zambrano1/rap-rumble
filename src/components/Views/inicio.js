@@ -6,6 +6,7 @@ import banner from'../../media/banner.png'
 import uderap from'../../media/uderap.png'
 import x from'../../media/x.png'
 import bg from'../../media/bg.png'
+import { getUsersByCompetitionApi } from '../../Services/APIS/Users';
 
 function Inicio()  {
   const navigate = useNavigate();
@@ -13,6 +14,18 @@ function Inicio()  {
   const Buttonroute = (route) => {
     navigate(route);
   };
+
+const [users, setUsers] = useState([]);
+
+const getUsersByCompetition = async (competition) => {
+  let result = await getUsersByCompetitionApi(competition);
+  setUsers(result);
+};
+
+useEffect(() => {
+  getUsersByCompetition("1");
+}
+, []);
 
   return (
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill'}}>
@@ -40,18 +53,14 @@ function Inicio()  {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th className='p-2'>1</th>
-                <td className='p-2'>Test</td>
-                <td className='p-2'>100</td>
-                <td className='p-2'>100</td>
-              </tr>
-              <tr>
-                <th className='p-2'>2</th>
-                <td className='p-2'>Pedro</td>
-                <td className='p-2'>90</td>
-                <td className='p-2'>90</td>
-              </tr>
+              {users.sort((a, b) => b.score - a.score).map((user, index) => (
+                <tr key={index}>
+                  <td className='p-2'>{index + 1}</td>
+                  <td className='p-2'>{user.aka}</td>
+                  <td className='p-2'>{user.score}</td>
+                  <td className='p-2'>{user.score}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
