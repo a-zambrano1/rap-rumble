@@ -14,7 +14,8 @@ import { notify } from '../Utils/notify';
 import VoteButton from '../Utils/VoteButton';
 import Checkbox from '@mui/material/Checkbox';
 
-const steps = ['Temáticas', 'Random Mode', 'Minuto a Sangre', '4x4 Libre', 'Réplica', 'Resultados'];
+
+const steps = ['Temáticas', 'Random Mode', 'Minutos a Sangre', '4x4 Libre', 'Réplica', 'Resultados'];
 
 const Votacion = ({ mc1, mc2, judge, localization }) => {
 
@@ -126,6 +127,24 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
     }
   })
 
+  const pag = ['Ida', 'Vuelta']
+  const [slide, setSlide] = React.useState(0)
+  const nextSlide = () => {
+    if (slide === pag.length - 1) {
+      setSlide(0)
+    } else {
+      setSlide(slide + 1)
+    }
+  }
+
+  const prevSlide = () => {
+    if (slide === 0) {
+      setSlide(pag.length - 1)
+    } else {
+      setSlide(slide - 1)
+    }
+  }
+
   const handleTematica = (tematica, mc, button, newValue) => {
     let newTematica = { ...tematicaValues }
     newTematica[`tematica${tematica}`][`mc${mc}`][`button${button}`] += newValue
@@ -153,6 +172,7 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
     handlePuntaje(mc, newValue)
     setMinutoIda(newMinutoIda)
   }
+  
   useEffect(() => {
     if (location.state !== null) {
       notify("success", "Datos cargados correctamente")
@@ -283,35 +303,42 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
             </div>
           </TabPanel>
           <TabPanel value={activeStep} index={2}>
-            <div className='flex justify-around mx-5'>
-              <div className='flex flex-col'> </div>
-              <div className='flex flex-col'> </div>
-            </div>
-            <div className='flex flex-col justify-around'>
-              <div className='flex flex-col text-center w-full'>
-                <label value="1" className='m-2 text-verde text-3xl'>Minuto a Sangre - Ida</label>
-                <div className='flex gap-2 items-center justify-around'>
-                  <div className='flex flex-col gap-1'>
-                    {[1, 2, 3, 4, 5, 6].map((num) => (
-                      <VoteButton count={minutoIda.mc1[`button${num}`]} onVote={(e) => handleMinutoIda(1, num, e)} />
-                    ))}
-                  </div>
-                  <div className='flex flex-col'>
-                    <div className='flex flex-col g-4'>
-                      respuesta
-                    </div>
-
-                    {
-                      [1, 2, 3, 4, 5, 6].map((num) => (
-
-                        <div className='flex flex-row'>
-                          <VoteButton count={minutoIda.mc2[`button${num}`]} onVote={(e) => handleMinutoIda(2, num, e)} />
-                          <Checkbox {...label} onClick={(e) => handlePointsRespuesta(2, e.target.checked)} />
+            <div>
+              {
+                pag.map((pag, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className={slide === index ? 'flex flex-col justify-around' : 'hidden'}>
+                      <div>
+                        <div className='flex flex-col text-center w-full'>
+                          <label value="1" className='m-2 text-verde text-3xl'>Minuto a Sangre {pag}</label>
+                          <div className='flex gap-2 items-center justify-around'>
+                            <div className='flex flex-col gap-1'>
+                              {[1, 2, 3, 4, 5, 6].map((num) => (
+                                <VoteButton count={minutoIda.mc1[`button${num}`]} onVote={(e) => handleMinutoIda(1, num, e)} />
+                              ))}
+                            </div>
+                            <div className='flex flex-col'>
+                              {
+                                [1, 2, 3, 4, 5, 6].map((num) => (
+                                  <div className='flex flex-row'>
+                                    <VoteButton count={minutoIda.mc2[`button${num}`]} onVote={(e) => handleMinutoIda(2, num, e)} />
+                                    <Checkbox {...label} onClick={(e) => handlePointsRespuesta(2, e.target.checked)} />
+                                  </div>
+                                ))
+                              }
+                            </div>
+                          </div>
                         </div>
-                      ))
-                    }
-                  </div>
-                </div>
+                      </div>
+                    </div>
+                  )
+                })
+              }
+              <div className='flex absolute w-2 h-2 '>
+                <button onClick={prevSlide}>Prev</button>
+                <button onClick={nextSlide}>Next</button>
               </div>
             </div>
           </TabPanel>
@@ -364,7 +391,7 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
           </section>
         </section>
       </div>
-    </div>
+    </div >
   )
 }
 
