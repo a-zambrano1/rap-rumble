@@ -12,6 +12,7 @@ import { useLocation } from 'react-router-dom';
 import { useForm } from '@mantine/form';
 import { notify } from '../Utils/notify';
 import VoteButton from '../Utils/VoteButton';
+import Checkbox from '@mui/material/Checkbox';
 
 const steps = ['Temáticas', 'Random Mode', 'Minuto a Sangre', '4x4 Libre', 'Réplica', 'Resultados'];
 
@@ -106,6 +107,25 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
     }
   })
 
+  const [minutoIda, setMinutoIda] = useState({
+    "mc1": {
+      "button1": 0,
+      "button2": 0,
+      "button3": 0,
+      "button4": 0,
+      "button5": 0,
+      "button6": 0
+    },
+    "mc2": {
+      "button1": 0,
+      "button2": 0,
+      "button3": 0,
+      "button4": 0,
+      "button5": 0,
+      "button6": 0
+    }
+  })
+
   const handleTematica = (tematica, mc, button, newValue) => {
     let newTematica = { ...tematicaValues }
     newTematica[`tematica${tematica}`][`mc${mc}`][`button${button}`] += newValue
@@ -126,6 +146,13 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
     handlePuntaje(mc, newValue)
     setLibreValues(new4x4)
   }
+
+  const handleMinutoIda = (mc, button, newValue) => {
+    let newMinutoIda = { ...minutoIda }
+    newMinutoIda[`mc${mc}`][`button${button}`] += newValue
+    handlePuntaje(mc, newValue)
+    setMinutoIda(newMinutoIda)
+  }
   useEffect(() => {
     if (location.state !== null) {
       notify("success", "Datos cargados correctamente")
@@ -140,6 +167,10 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
     // eslint-disable-next-line
   }, [location.state])
 
+  const handlePointsRespuesta = (mc, isChecked) => {
+    let newValue = isChecked ? 0.5 : -0.5
+    handlePuntaje(mc, newValue)
+  }
   const handlePuntaje = (mc, value) => {
     if (mc === 1) {
       let newValue = mc1pts + value
@@ -151,6 +182,7 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
 
   }
 
+  const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
   return (
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill' }}>
@@ -237,27 +269,51 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
                 <label value="1" className='m-2 text-verde text-3xl'>Random Mode</label>
                 <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
-                    <VoteButton count={randomValues.mc1.button1} onVote={(e) => handleRandom(1, 1, e)} />
-                    <VoteButton count={randomValues.mc1.button2} onVote={(e) => handleRandom(1, 2, e)} />
-                    <VoteButton count={randomValues.mc1.button3} onVote={(e) => handleRandom(1, 3, e)} />
-                    <VoteButton count={randomValues.mc1.button4} onVote={(e) => handleRandom(1, 4, e)} />
-                    <VoteButton count={randomValues.mc1.button5} onVote={(e) => handleRandom(1, 5, e)} />
-                    <VoteButton count={randomValues.mc1.button6} onVote={(e) => handleRandom(1, 6, e)} />
+                    {[1, 2, 3, 4, 5, 6].map((num) => (
+                      <VoteButton count={randomValues.mc1[`button${num}`]} onVote={(e) => handleRandom(1, num, e)} />
+                    ))}
                   </div>
                   <div className='flex flex-col gap-1'>
-                    <VoteButton count={randomValues.mc2.button1} onVote={(e) => handleRandom(2, 1, e)} />
-                    <VoteButton count={randomValues.mc2.button2} onVote={(e) => handleRandom(2, 2, e)} />
-                    <VoteButton count={randomValues.mc2.button3} onVote={(e) => handleRandom(2, 3, e)} />
-                    <VoteButton count={randomValues.mc2.button4} onVote={(e) => handleRandom(2, 4, e)} />
-                    <VoteButton count={randomValues.mc2.button5} onVote={(e) => handleRandom(2, 5, e)} />
-                    <VoteButton count={randomValues.mc2.button6} onVote={(e) => handleRandom(2, 6, e)} />
+                    {[1, 2, 3, 4, 5, 6].map((num) => (
+                      <VoteButton count={randomValues.mc2[`button${num}`]} onVote={(e) => handleRandom(2, num, e)} />
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
           </TabPanel>
           <TabPanel value={activeStep} index={2}>
-            SANGRE
+            <div className='flex justify-around mx-5'>
+              <div className='flex flex-col'> </div>
+              <div className='flex flex-col'> </div>
+            </div>
+            <div className='flex flex-col justify-around'>
+              <div className='flex flex-col text-center w-full'>
+                <label value="1" className='m-2 text-verde text-3xl'>Minuto a Sangre - Ida</label>
+                <div className='flex gap-2 items-center justify-around'>
+                  <div className='flex flex-col gap-1'>
+                    {[1, 2, 3, 4, 5, 6].map((num) => (
+                      <VoteButton count={minutoIda.mc1[`button${num}`]} onVote={(e) => handleMinutoIda(1, num, e)} />
+                    ))}
+                  </div>
+                  <div className='flex flex-col'>
+                    <div className='flex flex-col g-4'>
+                      respuesta
+                    </div>
+
+                    {
+                      [1, 2, 3, 4, 5, 6].map((num) => (
+
+                        <div className='flex flex-row'>
+                          <VoteButton count={minutoIda.mc2[`button${num}`]} onVote={(e) => handleMinutoIda(2, num, e)} />
+                          <Checkbox {...label} onClick={(e) => handlePointsRespuesta(2, e.target.checked)} />
+                        </div>
+                      ))
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
           </TabPanel>
           <TabPanel value={activeStep} index={3}>
             <div className='flex justify-around mx-5'>
@@ -269,20 +325,18 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
                 <label value="1" className='m-2 text-verde text-3xl'>4x4 Libre</label>
                 <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
-                    <VoteButton count={libreValues.mc1.button1} onVote={(e) => handle4x4(1, 1, e)} />
-                    <VoteButton count={libreValues.mc1.button2} onVote={(e) => handle4x4(1, 2, e)} />
-                    <VoteButton count={libreValues.mc1.button3} onVote={(e) => handle4x4(1, 3, e)} />
-                    <VoteButton count={libreValues.mc1.button4} onVote={(e) => handle4x4(1, 4, e)} />
-                    <VoteButton count={libreValues.mc1.button5} onVote={(e) => handle4x4(1, 5, e)} />
-                    <VoteButton count={libreValues.mc1.button6} onVote={(e) => handle4x4(1, 6, e)} />
+                    {
+                      [1, 2, 3, 4, 5, 6].map((num) => (
+                        <VoteButton count={libreValues.mc1[`button${num}`]} onVote={(e) => handle4x4(1, num, e)} />
+                      ))
+                    }
                   </div>
                   <div className='flex flex-col gap-1'>
-                    <VoteButton count={libreValues.mc2.button1} onVote={(e) => handle4x4(2, 1, e)} />
-                    <VoteButton count={libreValues.mc2.button2} onVote={(e) => handle4x4(2, 2, e)} />
-                    <VoteButton count={libreValues.mc2.button3} onVote={(e) => handle4x4(2, 3, e)} />
-                    <VoteButton count={libreValues.mc2.button4} onVote={(e) => handle4x4(2, 4, e)} />
-                    <VoteButton count={libreValues.mc2.button5} onVote={(e) => handle4x4(2, 5, e)} />
-                    <VoteButton count={libreValues.mc2.button6} onVote={(e) => handle4x4(2, 6, e)} />
+                    {
+                      [1, 2, 3, 4, 5, 6].map((num) => (
+                        <VoteButton count={libreValues.mc2[`button${num}`]} onVote={(e) => handle4x4(2, num, e)} />
+                      ))
+                    }
                   </div>
                 </div>
               </div>
@@ -293,12 +347,12 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
           </TabPanel>
           <TabPanel value={activeStep} index={5}>
             <div>
-            {mc1pts}, {form.values.mc1}
+              {mc1pts}, {form.values.mc1}
             </div>
             <div>
-            {mc2pts}, {form.values.mc2}            
+              {mc2pts}, {form.values.mc2}
             </div>
-            
+
           </TabPanel>
         </section>
         <div style={{ borderTop: "1px solid black", width: '100%' }}></div>
