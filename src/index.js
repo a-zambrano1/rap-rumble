@@ -3,10 +3,21 @@ import ReactDOM from 'react-dom/client';
 import './styles/index.css';
 import App from './components/App/App.js';
 import reportWebVitals from './reportWebVitals';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+        <ToastContainer
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={true}
+      newestOnTop={false}
+      draggable={false}
+      closeOnClick
+      pauseOnHover
+    />
     <App />
   </React.StrictMode>
 );

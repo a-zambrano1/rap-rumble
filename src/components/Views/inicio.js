@@ -52,30 +52,6 @@ function Inicio()  {
                 <td className='p-2'>90</td>
                 <td className='p-2'>90</td>
               </tr>
-              <tr>
-                <th className='p-2'>3</th>
-                <td className='p-2'>Jose</td>
-                <td className='p-2'>80</td>
-                <td className='p-2'>80</td>
-              </tr>
-              <tr>
-                <th className='p-2'>4</th>
-                <td className='p-2'>Luis</td>
-                <td className='p-2'>30</td>
-                <td className='p-2'>30</td>
-              </tr>
-              <tr>
-                <th className='p-2'>5</th>
-                <td className='p-2'>Pepe</td>
-                <td className='p-2'>10</td>
-                <td className='p-2'>10</td>
-              </tr>
-              <tr>
-                <th className='p-2'>5</th>
-                <td className='p-2'>Pepe</td>
-                <td className='p-2'>10</td>
-                <td className='p-2'>10</td>
-              </tr>
             </tbody>
           </table>
         </div>
