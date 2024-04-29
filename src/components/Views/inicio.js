@@ -43,6 +43,7 @@ useEffect(() => {
         </div>
         <hr class="w-4/5 h-0.5 bg-[#000000]"/>
         <div className= "flex w-full justify-center h-64" style={{overflow: "auto"}}>
+          {users != null ?
           <table className='table-auto'>
             <thead className='sticky top-0 bg-white'>
               <tr className='text-verde'>
@@ -52,17 +53,18 @@ useEffect(() => {
                 <th className='p-2'>PTS</th>
               </tr>
             </thead>
-            <tbody>
-              {users.sort((a, b) => b.score - a.score).map((user, index) => (
-                <tr key={index}>
-                  <td className='p-2'>{index + 1}</td>
-                  <td className='p-2'>{user.aka}</td>
-                  <td className='p-2'>{user.score}</td>
-                  <td className='p-2'>{user.score}</td>
-                </tr>
-              ))}
-            </tbody>
+              <tbody>
+                {users.sort((a, b) => b.score - a.score).map((user, index) => (
+                  <tr key={index}>
+                    <td className='p-2'>{index + 1}</td>
+                    <td className='p-2'>{user.aka}</td>
+                    <td className='p-2'>{user.score}</td>
+                    <td className='p-2'>{user.score}</td>
+                  </tr>
+                ))}
+              </tbody>
           </table>
+          : <div key={2} className='flex self-center'>Waiting for fetch data...</div>}
         </div>
         <hr class="w-4/5 h-0.5 bg-[#000000]"/>
       </div>

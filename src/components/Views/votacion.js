@@ -10,12 +10,8 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { useLocation } from 'react-router-dom';
 import { useForm } from '@mantine/form';
-import Stack from '@mui/material/Stack';
-import Icon from '@mui/material/Icon';
-import Fab from '@mui/material/Fab';
 import { notify } from '../Utils/notify';
 import VoteButton from '../Utils/VoteButton';
-import Checkbox from '@mui/material/Checkbox';
 
 const steps = ['Temáticas', 'Random Mode', 'Minuto a Sangre', '4x4 Libre', 'Réplica', 'Resultados'];
 

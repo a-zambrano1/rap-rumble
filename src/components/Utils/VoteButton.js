@@ -19,9 +19,9 @@ export default function VoteButton({ onVote, count = 0 }) {
 
     return (
         <div className='flex items-center gap-5'>
-            <Fab size="small" style={{ backgroundColor: refreshCount == 0? '#4CAF50': '#2D8F1D', color: 'white' }} aria-label="subtract" onClick={handleSubtract} disabled={refreshCount == 0}>-</Fab>
+            <Fab size="small" style={{ backgroundColor: refreshCount === 0? '#4CAF50': '#2D8F1D', color: 'white' }} aria-label="subtract" onClick={handleSubtract} disabled={refreshCount === 0}>-</Fab>
             <label className='text-xl w-10'>{refreshCount}</label>
-            <Fab size="small" style={{ backgroundColor: refreshCount == 4? '#4CAF50': '#2D8F1D', color: 'white' }} aria-label="add" onClick={handleAdd} disabled={refreshCount == 4}>+</Fab>
+            <Fab size="small" style={{ backgroundColor: refreshCount === 4? '#4CAF50': '#2D8F1D', color: 'white' }} aria-label="add" onClick={handleAdd} disabled={refreshCount === 4}>+</Fab>
         </div>
     );
 }
