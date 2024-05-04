@@ -1,7 +1,7 @@
 import React from 'react'
 import bg from'../../media/bg.png'
-import { Batalla } from '../Utils/Batalla.js';
-import { useNavigate } from 'react-router-dom';
+import { Batalla } from '../Utils/Batalla.js'
+import { useNavigate } from 'react-router-dom'
 
 const Jornada = () => {
 

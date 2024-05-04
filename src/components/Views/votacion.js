@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import '../../styles/styles.css'
 import bg from '../../media/bg.png'
-import { useNavigate } from 'react-router-dom';
-import Stepper from '@mui/material/Stepper';
-import StepButton from '@mui/material/StepButton';
+import { useNavigate } from 'react-router-dom'
+import Stepper from '@mui/material/Stepper'
+import StepButton from '@mui/material/StepButton'
 import StepLabel from '@mui/material/StepLabel'
-import Step from '@mui/material/Step';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import { useLocation } from 'react-router-dom';
-import { useForm } from '@mantine/form';
-import { notify } from '../Utils/notify';
-import VoteButton from '../Utils/VoteButton';
-import Checkbox from '@mui/material/Checkbox';
+import Step from '@mui/material/Step'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import { useLocation } from 'react-router-dom'
+import { useForm } from '@mantine/form'
+import { notify } from '../Utils/notify'
+import VoteButton from '../Utils/VoteButton'
+import Checkbox from '@mui/material/Checkbox'
 
 
 const steps = ['Temáticas', 'Random Mode', 'Minutos a Sangre', '4x4 Libre', 'Réplica', 'Resultados'];

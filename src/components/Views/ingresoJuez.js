@@ -1,16 +1,11 @@
-import React from "react";
+import React from "react"
 import '../../styles/styles.css'
 import bg from '../../media/bg.png'
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'
 
 function IngresoJuez() {
 
   const navigate = useNavigate();
-
-  const ButtonRoute = (route) => {
-    navigate(route);
-  };
 
   return (
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill'}}>
@@ -23,12 +18,12 @@ function IngresoJuez() {
             <span className='text-[70px] font-bold leading-none text-black'>Liga
               <span className='text-[70px] font-bold leading-none text-[#2D8F1D]'> UdeRAP</span>
             </span>
-            <span className="flex justify-start self-start">Ingreso de Juez</span>
+            <span className="flex justify-start self-start">Ingreso Admin & Jueces</span>
           </div>
           <div className="flex flex-col items-center gap-4">
             <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
             id="idJuez"
-            placeholder="A.K.A del Juez"
+            placeholder="Nombre de Usuario"
             />
             <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto"
               minLength="8"
@@ -38,7 +33,8 @@ function IngresoJuez() {
               placeholder="Contraseña"
             />
           </div>
-          <button onClick={() => ButtonRoute('/inicio_batalla')} className="rounded-xl bg-verde hover:bg-verdesito w-3/5 self-center text-white p-3 h-auto">
+           {/* si el usuario ingresado existe pero no tiene rol de juez o de usuario aparecera un mensaje indicandole que aún no le hann asignado ninguno de estos roles*/}
+          <button onClick={() => navigate('/inicio_batalla')} className="rounded-xl bg-verde hover:bg-verdesito w-3/5 self-center text-white p-3 h-auto">
             <span>Ingresar</span>
           </button>
         </div>

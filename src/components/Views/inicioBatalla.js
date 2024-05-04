@@ -1,11 +1,11 @@
 import React from 'react'
 import banner from '../../media/bg-hiphop.jpg'
 import uderap from '../../media/uderap.png'
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
 import bg from '../../media/bg-4.jpg'
-import { useForm } from "@mantine/form";
+import { useForm } from "@mantine/form"
 import { notify } from '../Utils/notify'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
 const InicioBatalla = () => {
 
