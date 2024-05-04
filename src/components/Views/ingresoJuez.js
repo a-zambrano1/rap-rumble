@@ -34,7 +34,7 @@ function IngresoJuez() {
             />
           </div>
            {/* si el usuario ingresado existe pero no tiene rol de juez o de usuario aparecera un mensaje indicandole que aún no le hann asignado ninguno de estos roles*/}
-          <button onClick={() => navigate('/inicio_batalla')} className="rounded-xl bg-verde hover:bg-verdesito w-3/5 self-center text-white p-3 h-auto">
+          <button onClick={() => navigate('/welcome')} className="rounded-xl bg-verde hover:bg-verdesito w-3/5 self-center text-white p-3 h-auto">
             <span>Ingresar</span>
           </button>
         </div>

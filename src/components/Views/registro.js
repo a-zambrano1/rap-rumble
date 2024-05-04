@@ -29,7 +29,7 @@ function Registro() {
 
         if (form.values.username === "" || form.values.aka === "" || form.values.correo === "" || form.values.password === "" || form.values.password2 === ""){
           notify("warning", "Por favor llena todos los campos")
-        } else if (!emailRegex.test(form.values.correo)){
+        } else if (!emailRegex.test(form.values.email)){
             notify("warning", "Correo no valido")
         } else if (!passwordRegex.test(form.values.password)){
             notify("warning", "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un caracter especial")
