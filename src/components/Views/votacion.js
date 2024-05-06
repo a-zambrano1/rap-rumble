@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import '../../styles/styles.css'
 import bg from '../../media/bg.png'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Stepper from '@mui/material/Stepper'
 import StepButton from '@mui/material/StepButton'
 import StepLabel from '@mui/material/StepLabel'
@@ -14,10 +14,11 @@ import { notify } from '../Utils/notify'
 import VoteButton from '../Utils/VoteButton'
 import Checkbox from '@mui/material/Checkbox'
 import { formatox6 } from '../Utils/VoteJsons'
+import { set } from 'firebase/database'
 
 const steps = ['Temáticas', 'Random Mode', 'Minutos a Sangre', '4x4 Libre', 'Réplica', 'Resultados'];
 
-const Votacion = ({ mc1, mc2, judge, localization }) => {
+const Votacion = () => {
 
   const location = useLocation()
   const [activeStep, setActiveStep] = React.useState(0);
@@ -50,43 +51,68 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
       juez: "",
       lugar: "",
       mc1: "MC 1",
-      mc2: "MC 2",
+      mc2: "MC 2"
+    },
+  })
+
+  const outForm = useForm({
+    initialValues: {
+      mc1: "",
+      mc2: "",
+      juez: "",
+      lugar: "",
+      mc1pts: 0,
+      mc2pts: 0,
+      winner: ""
     },
   })
 
   const [mc1pts, setMc1pts] = useState(0)
   const [mc2pts, setMc2pts] = useState(0)
+  const [winnerMc, setWinnerMc] = useState(null);
   
+
   const formatoTematica = JSON.parse(JSON.stringify(formatox6))
   const formatoRandom = JSON.parse(JSON.stringify(formatox6))
   const formatoLibre = JSON.parse(JSON.stringify(formatox6))
   const formatoMinuto = JSON.parse(JSON.stringify(formatox6))
+  const formatoReplica = JSON.parse(JSON.stringify(formatox6))
 
   const [tematicaValues, setTematicaValues] = useState(formatoTematica)
   const [randomValues, setRandomValues] = useState(formatoRandom)
   const [libreValues, setLibreValues] = useState(formatoLibre)
   const [minutoIda, setMinutoIda] = useState(formatoMinuto)
 
+  const [replicaValues, setReplicaValues] = useState(formatoReplica)
+  const replicaMc1 = Object.values(replicaValues.mc1).reduce((a, b) => a + b, 0);
+  const replicaMc2 = Object.values(replicaValues.mc2).reduce((a, b) => a + b, 0);
+
   const handlePatron = (mc, button, newValue, formatValues, setFormatValues) => {
     let newPatron = { ...formatValues }
     newPatron[`mc${mc}`][`button${button}`] += newValue
-    handlePuntaje(mc, newValue)
+    if (formatValues !== replicaValues) {
+      handlePuntaje(mc, newValue)
+    }
     setFormatValues(newPatron)
   }
   
   const handlePointsRespuesta = (mc, isChecked) => {
-    let newValue = isChecked ? 0.5 : -0.5
-    handlePuntaje(mc, newValue)
+    handlePuntaje(mc, isChecked ? 0.5 : -0.5)
   }
+
   const handlePuntaje = (mc, value) => {
-    if (mc === 1) {
-      let newValue = mc1pts + value
-      setMc1pts(newValue)
-    } else {
-      let newValue = mc2pts + value
-      setMc2pts(newValue)
-    }
+  mc === 1 ? setMc1pts(mc1pts + value) : setMc2pts(mc2pts + value)
   }
+
+  const handleSubmit = () => {
+    const userConfirmed = window.confirm("¿Estás seguro de enviar tu voto?");
+  
+    if (userConfirmed) {
+      notify("success", "Votación enviada correctamente");
+      } else {
+        notify("error", "Hubo un error al enviar tu voto.");
+      }
+    }
 
   useEffect(() => {
     if (location.state !== null) {
@@ -102,6 +128,19 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
     // eslint-disable-next-line
   }, [location.state])
 
+  useEffect(() => {
+    outForm.setValues({
+      mc1: form.values.mc1,
+      mc2: form.values.mc2,
+      juez: form.values.juez,
+      lugar: form.values.lugar,
+      mc1pts: mc1pts,
+      mc2pts: mc2pts,
+      winner: winnerMc
+    })
+  }, [winnerMc]);
+
+  const [selectedButton, setSelectedButton] = useState(null);
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
   return (
@@ -123,10 +162,6 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
           </Stepper>
           <div style={{ borderTop: "1px solid black", width: '100%' }}></div>
           <TabPanel value={activeStep} index={0}>
-            <div className='flex justify-around mx-5'>
-              <div className='flex flex-col'> </div>
-              <div className='flex flex-col'> </div>
-            </div>
             <div className='flex flex-col justify-around'>
               <div className='flex flex-col text-center w-full'>
                 <label value="1" className='m-2 text-verde text-3xl'>Tematica 1</label>
@@ -161,10 +196,6 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
             </div>
           </TabPanel>
           <TabPanel value={activeStep} index={1}>
-            <div className='flex justify-around mx-5'>
-              <div className='flex flex-col'> </div>
-              <div className='flex flex-col'> </div>
-            </div>
             <div className='flex flex-col justify-around'>
               <div className='flex flex-col text-center w-full'>
                 <label value="1" className='m-2 text-verde text-3xl'>Random Mode</label>
@@ -224,10 +255,6 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
             </div>
           </TabPanel>
           <TabPanel value={activeStep} index={3}>
-            <div className='flex justify-around mx-5'>
-              <div className='flex flex-col'> </div>
-              <div className='flex flex-col'> </div>
-            </div>
             <div className='flex flex-col justify-around'>
               <div className='flex flex-col text-center w-full'>
                 <label value="1" className='m-2 text-verde text-3xl'>4x4 Libre</label>
@@ -251,24 +278,68 @@ const Votacion = ({ mc1, mc2, judge, localization }) => {
             </div>
           </TabPanel>
           <TabPanel value={activeStep} index={4}>
-            En construccion ...
+            <div className='flex flex-col justify-around'>
+                <div className='flex flex-col text-center w-full gap-4'>
+                  <label value="1" className='m-2 text-verde text-3xl'>Réplica</label>
+                  <div className='flex gap-2 items-center justify-around'>
+                    <div className='flex flex-col gap-1'>
+                      {[1, 2, 3, 4].map((num) => (
+                        <VoteButton count={replicaValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, replicaValues, setReplicaValues)} />
+                      ))}
+                    </div>
+                    <div className='flex flex-col gap-1'>
+                      {[1, 2, 3, 4].map((num) => (
+                        <VoteButton count={replicaValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, replicaValues, setReplicaValues)} />
+                      ))}
+                    </div>
+                  </div>
+                  <div className='flex gap-2 items-center justify-around border-black'>
+                    <span className={`text-2xl w-10 ${replicaMc1 > replicaMc2 ? "text-verde" : "text-red-500"}`}>
+                      {replicaMc1}
+                    </span>
+                    <span className={`text-2xl w-10 ${replicaMc2 > replicaMc1 ? "text-verde" : "text-red-500"}`}>
+                      {replicaMc2}
+                    </span>
+                  </div>
+                </div>
+              </div>
           </TabPanel>
           <TabPanel value={activeStep} index={5}>
-            <div>
-              {mc1pts}, {form.values.mc1}
-            </div>
-            <div>
-              {mc2pts}, {form.values.mc2}
-            </div>
-
+            <div className='flex flex-col justify-around items-center gap-10'>
+              <label value="1" className='m-2 text-verde text-3xl'>Elige un Ganador</label>
+              <div className='flex justify-evenly text-center w-full gap-4'>
+              <button 
+                className={`flex flex-col items-center rounded-3xl border-2 w-1/5 ${selectedButton === 'mc1' ? 'bg-verde text-white' : 'border-black'}`}
+                onClick={() => {
+                  setWinnerMc(form.values.mc1);
+                  setSelectedButton('mc1');
+                }}
+              >
+                <span className='text-3xl m-3'>{form.values.mc1}</span>
+              </button>
+              <button 
+                className={`flex flex-col items-center rounded-3xl border-2 w-1/5 ${selectedButton === 'mc2' ? 'bg-verde text-white' : 'border-black'}`}
+                onClick={() => {
+                  setWinnerMc(form.values.mc2);
+                  setSelectedButton('mc2');
+                }}
+              >
+                <span className='text-3xl m-3'>{form.values.mc2}</span>
+              </button>
+              </div>
+              <button className={`rounded-xl text-white p-3 w-3/5 h-auto ${winnerMc === null ? 'bg-slate-500' : 'bg-verde hover:bg-verdesito'} `} 
+                      disabled={winnerMc === null}
+                      onClick={() => {handleSubmit()}}>Enviar Votación
+              </button>
+            </div>    
           </TabPanel>
         </section>
         <div style={{ borderTop: "1px solid black", width: '100%' }}></div>
         <section className='w-full text-center'>
-          <span className=''>Puntajes</span>
-          <section className='flex justify-between mx-5'>
-            <div className='flex flex-col'><span>{form.values.mc1}</span> <span>{mc1pts}</span></div>
-            <div className='flex flex-col'><span>{form.values.mc2}</span> <span>{mc2pts}</span></div>
+        <label value="1" className='m-2 text-verde text-3xl'>Puntajes</label>
+          <section className='flex justify-around mx-5'>
+            <div className='flex flex-col text-3xl w-10'><span>{mc1pts}</span></div>
+            <div className='flex flex-col text-3xl w-10'><span>{mc2pts}</span></div>
           </section>
         </section>
       </div>

@@ -5,7 +5,6 @@ import Jornada from "../Views/jornada";
 import Inicio from "../Views/inicio";
 import InicioBatalla from "../Views/inicioBatalla";
 import Registro from "../Views/registro";
-import SeccionRoles from "../Views/seccionRoles";
 import { Routes, BrowserRouter, Route } from "react-router-dom";
 import Admin from "../Views/admin";
 import Welcome from "../Views/welcome";
@@ -22,7 +21,6 @@ function App() {
           <Route path="/jornada" element={<Jornada />} />
           <Route path="/inicio_batalla" element={<InicioBatalla />} />
           <Route path="/registro_usuario" element={<Registro />} />
-          <Route path="/seccion_roles" element={<SeccionRoles />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/welcome" element={<Welcome />} />
         </Routes>

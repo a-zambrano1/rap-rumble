@@ -76,10 +76,10 @@ useEffect(() => {
       </div>
       <hr class="w-4/5 h-0.5 bg-[#000000]"/>
       <div className='flex gap-9'>
-        <button onClick={() => navigate('/registro_usuario')} className='rounded-3xl hover:bg-verdesito bg-verde' >Registro
+        <button onClick={() => navigate('/registro_usuario')} className='rounded-3xl hover:bg-verdesito bg-verde text-white' >Registro
           <img className='p-2 w-[100px] h-[90px]' src={rapero} alt="rapper"/>
         </button>
-        <button onClick={() => navigate('/ingreso_juez')} className='rounded-3xl hover:bg-verdesito bg-verde' >Ingreso
+        <button onClick={() => navigate('/ingreso_juez')} className='rounded-3xl hover:bg-verdesito bg-verde text-white' >Ingreso
           <img className='p-2 w-[100px] h-[90px]' src={x} alt="x"/>
         </button>
       </div>
