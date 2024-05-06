@@ -15,17 +15,38 @@ import VoteButton from '../Utils/VoteButton'
 import Checkbox from '@mui/material/Checkbox'
 import { formatox6 } from '../Utils/VoteJsons'
 import { set } from 'firebase/database'
+import Modal from '../Utils/ModalVotacion'
 
 const steps = ['Temáticas', 'Random Mode', 'Minutos a Sangre', '4x4 Libre', 'Réplica', 'Resultados'];
 
 const Votacion = () => {
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleConfirm = () => {
+    //logica para enviar la votacion a la base de datos
+    setIsModalOpen(false)
+    //si pasa la validación se enviará la votación y volverá a la pagina de inicio de batalla
+    notify("success", "Votación enviada correctamente")
+    console.log(outForm.values)
+    //navigate('/inicio_batalla')
+  }
+
+  const handleCancel = () => {
+    notify("error", "No se envió la votación.")
+    setIsModalOpen(false)
+  }
+
+  const handleSubmit = () => {
+    setIsModalOpen(true)
+  }
+
   const location = useLocation()
-  const [activeStep, setActiveStep] = React.useState(0);
-  const navigate = useNavigate();
+  const [activeStep, setActiveStep] = React.useState(0)
+  const navigate = useNavigate()
 
   const handleStep = (step) => () => {
-    setActiveStep(step);
+    setActiveStep(step)
   };
 
   const pag = ['Ida', 'Vuelta']
@@ -70,7 +91,8 @@ const Votacion = () => {
   const [mc1pts, setMc1pts] = useState(0)
   const [mc2pts, setMc2pts] = useState(0)
   const [winnerMc, setWinnerMc] = useState(null);
-  
+  const [selectedButton, setSelectedButton] = useState(null)
+  const [isButtonClicked, setIsButtonClicked] = useState(false)
 
   const formatoTematica = JSON.parse(JSON.stringify(formatox6))
   const formatoRandom = JSON.parse(JSON.stringify(formatox6))
@@ -104,16 +126,6 @@ const Votacion = () => {
   mc === 1 ? setMc1pts(mc1pts + value) : setMc2pts(mc2pts + value)
   }
 
-  const handleSubmit = () => {
-    const userConfirmed = window.confirm("¿Estás seguro de enviar tu voto?");
-  
-    if (userConfirmed) {
-      notify("success", "Votación enviada correctamente");
-      } else {
-        notify("error", "Hubo un error al enviar tu voto.");
-      }
-    }
-
   useEffect(() => {
     if (location.state !== null) {
       notify("success", "Datos cargados correctamente")
@@ -138,10 +150,11 @@ const Votacion = () => {
       mc2pts: mc2pts,
       winner: winnerMc
     })
-  }, [winnerMc]);
+  }, [winnerMc, selectedButton])
 
-  const [selectedButton, setSelectedButton] = useState(null);
-  const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+  
+
+  const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
   return (
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill' }}>
@@ -164,8 +177,13 @@ const Votacion = () => {
           <TabPanel value={activeStep} index={0}>
             <div className='flex flex-col justify-around'>
               <div className='flex flex-col text-center w-full'>
-                <label value="1" className='m-2 text-verde text-3xl'>Tematica 1</label>
-                <div className='flex flex-row gap-2 items-center justify-around'>
+                <label value="1" className='m-2 text-verde text-3xl'>Temática 1</label>
+                <div className='flex gap-2 items-center justify-around'>
+                  <h1 className='text-3xl'>{form.values.mc1}</h1>
+                  <h1 className='text-3xl'>{form.values.mc2}</h1>
+                </div>
+                <br/>
+                <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
                     {[1, 2, 3].map((num) => (
                       <VoteButton count={tematicaValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, tematicaValues, setTematicaValues)} />
@@ -179,7 +197,7 @@ const Votacion = () => {
                 </div>
               </div>
               <div className='flex flex-col text-center w-full'>
-                <label value="1" className='m-2 text-verde text-3xl'>Tematica 2</label>
+                <label value="1" className='m-2 text-verde text-3xl'>Temática 2</label>
                 <div className='flex flex-row gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
                     {[4, 5, 6].map((num) => (
@@ -199,6 +217,11 @@ const Votacion = () => {
             <div className='flex flex-col justify-around'>
               <div className='flex flex-col text-center w-full'>
                 <label value="1" className='m-2 text-verde text-3xl'>Random Mode</label>
+                <div className='flex gap-2 items-center justify-around'>
+                  <h1 className='text-3xl'>{form.values.mc1}</h1>
+                  <h1 className='text-3xl'>{form.values.mc2}</h1>
+                </div>
+                <br/>
                 <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
                     {[1, 2, 3, 4, 5, 6].map((num) => (
@@ -225,6 +248,11 @@ const Votacion = () => {
                       <div>
                         <div className='flex flex-col text-center w-full'>
                           <label value="1" className='m-2 text-verde text-3xl'>Minuto a Sangre {pag}</label>
+                          <div className='flex gap-2 items-center justify-around'>
+                            <h1 className='text-3xl'>{form.values.mc1}</h1>
+                            <h1 className='text-3xl'>{form.values.mc2}</h1>
+                          </div>
+                          <br/>
                           <div className='flex gap-2 items-center justify-around'>
                             <div className='flex flex-col gap-1'>
                               {[1, 2, 3, 4, 5, 6].map((num) => (
@@ -259,6 +287,11 @@ const Votacion = () => {
               <div className='flex flex-col text-center w-full'>
                 <label value="1" className='m-2 text-verde text-3xl'>4x4 Libre</label>
                 <div className='flex gap-2 items-center justify-around'>
+                  <h1 className='text-3xl'>{form.values.mc1}</h1>
+                  <h1 className='text-3xl'>{form.values.mc2}</h1>
+                </div>
+                <br/>
+                <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
                     {
                       [1, 2, 3, 4, 5, 6].map((num) => (
@@ -281,6 +314,10 @@ const Votacion = () => {
             <div className='flex flex-col justify-around'>
                 <div className='flex flex-col text-center w-full gap-4'>
                   <label value="1" className='m-2 text-verde text-3xl'>Réplica</label>
+                  <div className='flex gap-2 items-center justify-around'>
+                    <h1 className='text-3xl'>{form.values.mc1}</h1>
+                    <h1 className='text-3xl'>{form.values.mc2}</h1>
+                  </div>
                   <div className='flex gap-2 items-center justify-around'>
                     <div className='flex flex-col gap-1'>
                       {[1, 2, 3, 4].map((num) => (
@@ -311,8 +348,9 @@ const Votacion = () => {
               <button 
                 className={`flex flex-col items-center rounded-3xl border-2 w-1/5 ${selectedButton === 'mc1' ? 'bg-verde text-white' : 'border-black'}`}
                 onClick={() => {
-                  setWinnerMc(form.values.mc1);
-                  setSelectedButton('mc1');
+                  setWinnerMc(form.values.mc1)
+                  setSelectedButton('mc1')
+                  setIsButtonClicked(false)
                 }}
               >
                 <span className='text-3xl m-3'>{form.values.mc1}</span>
@@ -320,17 +358,25 @@ const Votacion = () => {
               <button 
                 className={`flex flex-col items-center rounded-3xl border-2 w-1/5 ${selectedButton === 'mc2' ? 'bg-verde text-white' : 'border-black'}`}
                 onClick={() => {
-                  setWinnerMc(form.values.mc2);
-                  setSelectedButton('mc2');
+                  setWinnerMc(form.values.mc2)
+                  setSelectedButton('mc2')
+                  setIsButtonClicked(false)
                 }}
               >
                 <span className='text-3xl m-3'>{form.values.mc2}</span>
               </button>
               </div>
-              <button className={`rounded-xl text-white p-3 w-3/5 h-auto ${winnerMc === null ? 'bg-slate-500' : 'bg-verde hover:bg-verdesito'} `} 
-                      disabled={winnerMc === null}
-                      onClick={() => {handleSubmit()}}>Enviar Votación
+              <button className={`rounded-xl text-white p-3 w-3/5 h-auto ${winnerMc === null || isButtonClicked ? 'bg-slate-500' : 'bg-verde hover:bg-verdesito'} `} 
+                      disabled={winnerMc === null || isButtonClicked}
+                      onClick={() => {
+                        handleSubmit()
+                        setIsButtonClicked(true)
+                        setSelectedButton(null)
+                      }}>Enviar Votación
               </button>
+              <Modal isOpen={isModalOpen} onConfirm={handleConfirm} onCancel={handleCancel}>
+                ¿Estás seguro de enviar tu voto?
+              </Modal>
             </div>    
           </TabPanel>
         </section>

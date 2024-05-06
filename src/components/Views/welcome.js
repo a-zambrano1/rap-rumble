@@ -25,10 +25,10 @@ const Welcome = () => {
                     <h1 className='flex text-[50px]'>Hola User! Qué quieres hacer hoy?</h1>
                 </section>
                 <section className='flex justify-evenly gap-4'>
-                    <button onClick={() => navigate('/admin')} className='flex flex-col items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-4/12' >Ingresar como Juez
+                    <button onClick={() => navigate('/inicio_batalla')} className='flex flex-col items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-4/12' >Ingresar como Juez
                         <img className='p-2' src={hat} alt="rapper"/>
                     </button>
-                    <button onClick={() => navigate('/inicio_batalla')} className='flex flex-col items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-4/12' >Ingresar como Admin
+                    <button onClick={() => navigate('/admin')} className='flex flex-col items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-4/12' >Ingresar como Admin
                         <img className='p-2' src={snoop} alt="rapper"/>
                     </button>
                 </section>
