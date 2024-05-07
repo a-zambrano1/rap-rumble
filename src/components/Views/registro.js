@@ -59,11 +59,13 @@ function Registro() {
                 <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
                 id="username"
                 placeholder="Nombre de Usuario"
+                maxLength="20"
                 onChange={(e) => form.setFieldValue('username', e.target.value)}
                 />
                 <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
                 id="aka"
                 placeholder="A.K.A"
+                maxLength="20"
                 onChange={(e) => form.setFieldValue('aka', e.target.value)}
                 />
                 <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
@@ -75,12 +77,14 @@ function Registro() {
                 id="password"
                 placeholder="Contraseña"
                 type='password'
+                maxLength="20"
                 onChange={(e) => form.setFieldValue('password', e.target.value)}
                 />
                 <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
                 id="password2"
                 placeholder="Confirmar Contraseña"
                 type='password'
+                maxLength="20"
                 onChange={(e) => form.setFieldValue('password2', e.target.value)}
                 />
             </div>
