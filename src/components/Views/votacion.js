@@ -15,7 +15,7 @@ import VoteButton from '../Utils/VoteButton'
 import Checkbox from '@mui/material/Checkbox'
 import { formatox6 } from '../Utils/VoteJsons'
 import { set } from 'firebase/database'
-import Modal from '../Utils/ModalVotacion'
+import ModalVote from '../Utils/ModalVotacion'
 
 const steps = ['Temáticas', 'Random Mode', 'Minutos a Sangre', '4x4 Libre', 'Réplica', 'Resultados'];
 
@@ -374,9 +374,9 @@ const Votacion = () => {
                         setSelectedButton(null)
                       }}>Enviar Votación
               </button>
-              <Modal isOpen={isModalOpen} onConfirm={handleConfirm} onCancel={handleCancel}>
+              <ModalVote isOpen={isModalOpen} onConfirm={handleConfirm} onCancel={handleCancel}>
                 ¿Estás seguro de enviar tu voto?
-              </Modal>
+              </ModalVote>
             </div>    
           </TabPanel>
         </section>

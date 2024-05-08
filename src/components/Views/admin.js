@@ -4,6 +4,7 @@ import bg from '../../media/bg.png'
 function Admin() {
 
   const [akaShown, setAkaShown] = useState('Zzatanas')
+  const [Competencia, setCompetencia] = useState('UdeRap')
   
   return (
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill' }}>
@@ -14,7 +15,7 @@ function Admin() {
         </section>
         <section className='flex flex-col items-center w-full px-2'>
           <div className='flex flex-col justify-center items-center w-4/5 gap-5'>
-            <h1 className='text-[30px] text-[#3d405b] text-center'>Miembros de la Competencia</h1>
+            <h1 className='text-[30px] text-[#3d405b] text-center'>Miembros de {Competencia}</h1>
             <hr class="w-4/5 h-0.5 bg-[#000000]" />
             <div className="flex w-full justify-center items-center h-64" style={{ overflow: "auto" }}>
               <table className='table-auto'>
@@ -23,6 +24,7 @@ function Admin() {
                     <th className='p-2'>A.K.A</th>
                     <th className='p-2'>Rol</th>
                     <th className='p-2'>Editar</th>
+                    <th className='p-2'>Eliminar</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -30,26 +32,31 @@ function Admin() {
                     <td className='p-2'>Zzatanas</td>
                     <td className='p-2'>Juez</td>
                     <td className='p-2'>Boton editar</td>
+                    <td className='p-2'>Boton eliminar</td>
                   </tr>
                   <tr>
                     <td className='p-2'>Zzatanas</td>
                     <td className='p-2'>Juez</td>
                     <td className='p-2'>Boton editar</td>
+                    <td className='p-2'>Boton eliminar</td>
                   </tr>
                   <tr>
                     <td className='p-2'>Zzatanas</td>
                     <td className='p-2'>Juez</td>
                     <td className='p-2'>Boton editar</td>
+                    <td className='p-2'>Boton eliminar</td>
                   </tr>
                   <tr>
                     <td className='p-2'>Zzatanas</td>
                     <td className='p-2'>Juez</td>
                     <td className='p-2'>Boton editar</td>
+                    <td className='p-2'>Boton eliminar</td>
                   </tr>
                   <tr>
                     <td className='p-2'>Zzatanas</td>
                     <td className='p-2'>Juez</td>
                     <td className='p-2'>Boton editar</td>
+                    <td className='p-2'>Boton eliminar</td>
                   </tr>
                   
                 </tbody>

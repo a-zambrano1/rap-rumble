@@ -12,10 +12,11 @@ const images = {
   };
 
 function Batalla(props) {
-    const { mc1, mc2, pts1, pts2} = props;
-    
+    const { mc1, mc2, pts1, pts2, winner, clicked} = props;
+
+
     return (
-        <div className='h-auto w-auto flex hover:scale-110 cursor-pointer flex-col'>
+        <div className='h-auto w-auto flex hover:scale-110 cursor-pointer flex-col' onClick={clicked}>
             <div className='flex flex-col gap-5 my-auto items-center border-2 rounded-3xl relative'>
                 <div className='flex w-full'>
                     <div className='flex flex-col items-center w-1/2'>
@@ -30,10 +31,10 @@ function Batalla(props) {
                 </div>
             </div>
             <div className='h-full w-full flex'>
-                <div className={`flex w-1/2 justify-center gap-5 my-auto py-3 border-2 rounded-3xl ${Number(pts1) > Number(pts2) ? 'border-verde' : 'border-red-500'}`}>
+                <div className={`flex w-1/2 justify-center gap-5 my-auto py-3 border-2 rounded-3xl ${winner === mc1 ? 'border-verde' : 'border-red-500'}`}>
                     <span>{pts1}</span>
                 </div>
-                <div className={`flex w-1/2 justify-center gap-5 my-auto py-3 border-2 rounded-3xl ${Number(pts2) > Number(pts1) ? 'border-verde' : 'border-red-500'}`}>
+                <div className={`flex w-1/2 justify-center gap-5 my-auto py-3 border-2 rounded-3xl ${winner === mc2 ? 'border-verde' : 'border-red-500'}`}>
                     <span>{pts2}</span>
                 </div>
             </div>

@@ -7,12 +7,12 @@ import { notify } from '../Utils/notify'
 import {createUserApi} from '../../Services/APIS/CreateUser'
 
 function Registro() {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const createUser = async (props) => {
-        let result = await createUserApi(props);
-        return result;
-    };
+        let result = await createUserApi(props)
+        return result
+    }
 
     const form = useForm({
         initialValues: {
@@ -22,10 +22,11 @@ function Registro() {
           password: "",
           password2: "",
         },
-      });
+      })
+
       const handleSubmit = () => {  
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 
         if (form.values.username === "" || form.values.aka === "" || form.values.correo === "" || form.values.password === "" || form.values.password2 === ""){
           notify("warning", "Por favor llena todos los campos")
