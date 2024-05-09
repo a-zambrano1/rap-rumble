@@ -1,6 +1,4 @@
-import React from 'react'
-
-const formatox6 = {
+export const formatox6 = {
     "mc1": {
       "button1": 0,
       "button2": 0,
@@ -19,4 +17,21 @@ const formatox6 = {
     }
   }
 
-export {formatox6};
+  export const formatoRespuesta = {
+    "mc1": {
+      "check1": false,
+      "check2": false,
+      "check3": false,
+      "check4": false,
+      "check5": false,
+      "check6": false
+    },
+    "mc2": {
+      "check1": false,
+      "check2": false,
+      "check3": false,
+      "check4": false,
+      "check5": false,
+      "check6": false
+    }
+  }

@@ -13,9 +13,10 @@ import { useForm } from '@mantine/form'
 import { notify } from '../Utils/notify'
 import VoteButton from '../Utils/VoteButton'
 import Checkbox from '@mui/material/Checkbox'
-import { formatox6 } from '../Utils/VoteJsons'
+import { formatox6, formatoRespuesta } from '../Utils/VoteJsons'
 import { set } from 'firebase/database'
 import ModalVote from '../Utils/ModalVotacion'
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const steps = ['Temáticas', 'Random Mode', 'Minutos a Sangre', '4x4 Libre', 'Réplica', 'Resultados'];
 
@@ -97,13 +98,17 @@ const Votacion = () => {
   const formatoTematica = JSON.parse(JSON.stringify(formatox6))
   const formatoRandom = JSON.parse(JSON.stringify(formatox6))
   const formatoLibre = JSON.parse(JSON.stringify(formatox6))
-  const formatoMinuto = JSON.parse(JSON.stringify(formatox6))
+  const formatoMinutoIda = JSON.parse(JSON.stringify(formatox6))
+  const formatoMinutoVuelta = JSON.parse(JSON.stringify(formatox6))
   const formatoReplica = JSON.parse(JSON.stringify(formatox6))
+  const formatoRespuestas = JSON.parse(JSON.stringify(formatoRespuesta))
 
   const [tematicaValues, setTematicaValues] = useState(formatoTematica)
   const [randomValues, setRandomValues] = useState(formatoRandom)
   const [libreValues, setLibreValues] = useState(formatoLibre)
-  const [minutoIda, setMinutoIda] = useState(formatoMinuto)
+  const [minutoIda, setMinutoIda] = useState(formatoMinutoIda)
+  const [minutoVuelta, setMinutoVuelta] = useState(formatoMinutoVuelta)
+  const [respuestas, setRespuestas] = useState(formatoRespuestas)
 
   const [replicaValues, setReplicaValues] = useState(formatoReplica)
   const replicaMc1 = Object.values(replicaValues.mc1).reduce((a, b) => a + b, 0);
@@ -117,13 +122,16 @@ const Votacion = () => {
     }
     setFormatValues(newPatron)
   }
-  
-  const handlePointsRespuesta = (mc, isChecked) => {
-    handlePuntaje(mc, isChecked ? 0.5 : -0.5)
+
+  const handlePointsRespuesta = (mc, num, isChecked, setFormatValues) => {
+    let newRespuesta = { ...respuestas }
+    newRespuesta[`mc${mc}`][`check${num}`] = isChecked
+    setFormatValues(newRespuesta)
+    handlePuntaje(mc, newRespuesta[`mc${mc}`][`check${num}`] ? 0.5 : -0.5)
   }
 
   const handlePuntaje = (mc, value) => {
-  mc === 1 ? setMc1pts(mc1pts + value) : setMc2pts(mc2pts + value)
+    mc === 1 ? setMc1pts(mc1pts + value) : setMc2pts(mc2pts + value)
   }
 
   useEffect(() => {
@@ -152,7 +160,7 @@ const Votacion = () => {
     })
   }, [winnerMc, selectedButton])
 
-  
+
 
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
@@ -182,7 +190,7 @@ const Votacion = () => {
                   <h1 className='text-3xl'>{form.values.mc1}</h1>
                   <h1 className='text-3xl'>{form.values.mc2}</h1>
                 </div>
-                <br/>
+                <br />
                 <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
                     {[1, 2, 3].map((num) => (
@@ -221,7 +229,7 @@ const Votacion = () => {
                   <h1 className='text-3xl'>{form.values.mc1}</h1>
                   <h1 className='text-3xl'>{form.values.mc2}</h1>
                 </div>
-                <br/>
+                <br />
                 <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
                     {[1, 2, 3, 4, 5, 6].map((num) => (
@@ -249,11 +257,11 @@ const Votacion = () => {
                         <div className='flex flex-col text-center w-full'>
                           <label value="1" className='m-2 text-verde text-3xl'>Minuto a Sangre {pag}</label>
                           <div className='flex gap-2 items-center justify-around'>
-                            <h1 className='text-3xl'>{form.values.mc1}</h1>
-                            <h1 className='text-3xl'>{form.values.mc2}</h1>
+                            <h1 className='text-3xl'>{slide == 0 ? form.values.mc1 : form.values.mc2}</h1>
+                            <h1 className='text-3xl'>{slide == 0 ? form.values.mc2 : form.values.mc1}</h1>
                           </div>
-                          <br/>
-                          <div className='flex gap-2 items-center justify-around'>
+                          <br />
+                          <div className={slide == 0 ? 'flex gap-2 items-center justify-around' : "hidden"}>
                             <div className='flex flex-col gap-1'>
                               {[1, 2, 3, 4, 5, 6].map((num) => (
                                 <VoteButton count={minutoIda.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, minutoIda, setMinutoIda)} />
@@ -264,7 +272,28 @@ const Votacion = () => {
                                 [1, 2, 3, 4, 5, 6].map((num) => (
                                   <div className='flex flex-row'>
                                     <VoteButton count={minutoIda.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, minutoIda, setMinutoIda)} />
-                                    <Checkbox {...label} onClick={(e) => handlePointsRespuesta(2, e.target.checked)} />
+                                    <Checkbox {...label} checked={
+                                      respuestas.mc2[`check${num}`]
+                                    } onClick={(e) => handlePointsRespuesta(2, num, e.target.checked, setRespuestas)} />
+                                  </div>
+                                ))
+                              }
+                            </div>
+                          </div>
+                          <div className={slide == 1 ? 'flex gap-2 items-center justify-around' : "hidden"}>
+                            <div className='flex flex-col gap-1'>
+                              {[1, 2, 3, 4, 5, 6].map((num) => (
+                                <VoteButton count={minutoVuelta.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, minutoVuelta, setMinutoVuelta)} />
+                              ))}
+                            </div>
+                            <div className='flex flex-col'>
+                              {
+                                [1, 2, 3, 4, 5, 6].map((num) => (
+                                  <div className='flex flex-row'>
+                                    <VoteButton count={minutoVuelta.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, minutoVuelta, setMinutoVuelta)} />
+                                    <Checkbox {...label} checked={
+                                      respuestas.mc1[`check${num}`]
+                                    } onClick={(e) => handlePointsRespuesta(1, num, e.target.checked, setRespuestas)} />
                                   </div>
                                 ))
                               }
@@ -276,9 +305,9 @@ const Votacion = () => {
                   )
                 })
               }
-              <div className='flex absolute w-2 h-2 '>
-                <button onClick={prevSlide}>Prev</button>
-                <button onClick={nextSlide}>Next</button>
+              <div className='flex justify-between w[100%] h-5 pt-5'>
+                <button disabled={slide === 0} className='float-end' onClick={prevSlide}><FaArrowLeft color={slide === 0 ? "gray" : "green"} size={20} /></button>
+                <button disabled={slide === 1} className='float-start' onClick={nextSlide}><FaArrowRight color={slide === 1 ? "gray" : 'green'} size={20} /></button>
               </div>
             </div>
           </TabPanel>
@@ -290,7 +319,7 @@ const Votacion = () => {
                   <h1 className='text-3xl'>{form.values.mc1}</h1>
                   <h1 className='text-3xl'>{form.values.mc2}</h1>
                 </div>
-                <br/>
+                <br />
                 <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
                     {
@@ -312,77 +341,77 @@ const Votacion = () => {
           </TabPanel>
           <TabPanel value={activeStep} index={4}>
             <div className='flex flex-col justify-around'>
-                <div className='flex flex-col text-center w-full gap-4'>
-                  <label value="1" className='m-2 text-verde text-3xl'>Réplica</label>
-                  <div className='flex gap-2 items-center justify-around'>
-                    <h1 className='text-3xl'>{form.values.mc1}</h1>
-                    <h1 className='text-3xl'>{form.values.mc2}</h1>
+              <div className='flex flex-col text-center w-full gap-4'>
+                <label value="1" className='m-2 text-verde text-3xl'>Réplica</label>
+                <div className='flex gap-2 items-center justify-around'>
+                  <h1 className='text-3xl'>{form.values.mc1}</h1>
+                  <h1 className='text-3xl'>{form.values.mc2}</h1>
+                </div>
+                <div className='flex gap-2 items-center justify-around'>
+                  <div className='flex flex-col gap-1'>
+                    {[1, 2, 3, 4].map((num) => (
+                      <VoteButton count={replicaValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, replicaValues, setReplicaValues)} />
+                    ))}
                   </div>
-                  <div className='flex gap-2 items-center justify-around'>
-                    <div className='flex flex-col gap-1'>
-                      {[1, 2, 3, 4].map((num) => (
-                        <VoteButton count={replicaValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, replicaValues, setReplicaValues)} />
-                      ))}
-                    </div>
-                    <div className='flex flex-col gap-1'>
-                      {[1, 2, 3, 4].map((num) => (
-                        <VoteButton count={replicaValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, replicaValues, setReplicaValues)} />
-                      ))}
-                    </div>
-                  </div>
-                  <div className='flex gap-2 items-center justify-around border-black'>
-                    <span className={`text-2xl w-10 ${replicaMc1 > replicaMc2 ? "text-verde" : "text-red-500"}`}>
-                      {replicaMc1}
-                    </span>
-                    <span className={`text-2xl w-10 ${replicaMc2 > replicaMc1 ? "text-verde" : "text-red-500"}`}>
-                      {replicaMc2}
-                    </span>
+                  <div className='flex flex-col gap-1'>
+                    {[1, 2, 3, 4].map((num) => (
+                      <VoteButton count={replicaValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, replicaValues, setReplicaValues)} />
+                    ))}
                   </div>
                 </div>
+                <div className='flex gap-2 items-center justify-around border-black'>
+                  <span className={`text-2xl w-10 ${replicaMc1 > replicaMc2 ? "text-verde" : "text-red-500"}`}>
+                    {replicaMc1}
+                  </span>
+                  <span className={`text-2xl w-10 ${replicaMc2 > replicaMc1 ? "text-verde" : "text-red-500"}`}>
+                    {replicaMc2}
+                  </span>
+                </div>
               </div>
+            </div>
           </TabPanel>
           <TabPanel value={activeStep} index={5}>
             <div className='flex flex-col justify-around items-center gap-10'>
               <label value="1" className='m-2 text-verde text-3xl'>Elige un Ganador</label>
               <div className='flex justify-evenly text-center w-full gap-4'>
-              <button 
-                className={`flex flex-col items-center rounded-3xl border-2 w-1/5 ${selectedButton === 'mc1' ? 'bg-verde text-white' : 'border-black'}`}
-                onClick={() => {
-                  setWinnerMc(form.values.mc1)
-                  setSelectedButton('mc1')
-                  setIsButtonClicked(false)
-                }}
-              >
-                <span className='text-3xl m-3'>{form.values.mc1}</span>
-              </button>
-              <button 
-                className={`flex flex-col items-center rounded-3xl border-2 w-1/5 ${selectedButton === 'mc2' ? 'bg-verde text-white' : 'border-black'}`}
-                onClick={() => {
-                  setWinnerMc(form.values.mc2)
-                  setSelectedButton('mc2')
-                  setIsButtonClicked(false)
-                }}
-              >
-                <span className='text-3xl m-3'>{form.values.mc2}</span>
-              </button>
+                <button
+                  className={`flex flex-col items-center rounded-3xl border-2 w-auto ${selectedButton === 'mc1' ? 'bg-verde text-white' : 'border-black'}`}
+                  onClick={() => {
+                    setWinnerMc(form.values.mc1)
+                    setSelectedButton('mc1')
+                    setIsButtonClicked(false)
+                  }}
+                >
+                  <span className='text-3xl m-3'>{form.values.mc1}</span>
+                </button>
+                <button
+                  className={`flex flex-col items-center rounded-3xl border-2 w-auto ${selectedButton === 'mc2' ? 'bg-verde text-white' : 'border-black'}`}
+                  onClick={() => {
+                    setWinnerMc(form.values.mc2)
+                    setSelectedButton('mc2')
+                    setIsButtonClicked(false)
+                  }}
+                >
+                  <span className='text-3xl m-3'>{form.values.mc2}</span>
+                </button>
               </div>
-              <button className={`rounded-xl text-white p-3 w-3/5 h-auto ${winnerMc === null || isButtonClicked ? 'bg-slate-500' : 'bg-verde hover:bg-verdesito'} `} 
-                      disabled={winnerMc === null || isButtonClicked}
-                      onClick={() => {
-                        handleSubmit()
-                        setIsButtonClicked(true)
-                        setSelectedButton(null)
-                      }}>Enviar Votación
+              <button className={`rounded-xl text-white p-3 w-3/5 h-auto ${winnerMc === null || isButtonClicked ? 'bg-slate-500' : 'bg-verde hover:bg-verdesito'} `}
+                disabled={winnerMc === null || isButtonClicked}
+                onClick={() => {
+                  handleSubmit()
+                  setIsButtonClicked(true)
+                  setSelectedButton(null)
+                }}>Enviar Votación
               </button>
               <ModalVote isOpen={isModalOpen} onConfirm={handleConfirm} onCancel={handleCancel}>
                 ¿Estás seguro de enviar tu voto?
               </ModalVote>
-            </div>    
+            </div>
           </TabPanel>
         </section>
         <div style={{ borderTop: "1px solid black", width: '100%' }}></div>
         <section className='w-full text-center'>
-        <label value="1" className='m-2 text-verde text-3xl'>Puntajes</label>
+          <label value="1" className='m-2 text-verde text-3xl'>Puntajes</label>
           <section className='flex justify-around mx-5'>
             <div className='flex flex-col text-3xl w-10'><span>{mc1pts}</span></div>
             <div className='flex flex-col text-3xl w-10'><span>{mc2pts}</span></div>
