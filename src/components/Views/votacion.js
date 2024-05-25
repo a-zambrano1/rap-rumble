@@ -14,7 +14,6 @@ import { notify } from '../Utils/notify'
 import VoteButton from '../Utils/VoteButton'
 import Checkbox from '@mui/material/Checkbox'
 import { formatox6, formatoRespuesta } from '../Utils/VoteJsons'
-import { set } from 'firebase/database'
 import ModalVote from '../Utils/ModalVotacion'
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
@@ -158,7 +157,7 @@ const Votacion = () => {
       mc2pts: mc2pts,
       winner: winnerMc
     })
-  }, [winnerMc, selectedButton])
+  }, [form.values.mc1, form.values.mc2, form.values.juez, form.values.lugar, mc1pts, mc2pts, outForm, winnerMc, selectedButton])
 
 
 
@@ -257,11 +256,11 @@ const Votacion = () => {
                         <div className='flex flex-col text-center w-full'>
                           <label value="1" className='m-2 text-verde text-3xl'>Minuto a Sangre {pag}</label>
                           <div className='flex gap-2 items-center justify-around'>
-                            <h1 className='text-3xl'>{slide == 0 ? form.values.mc1 : form.values.mc2}</h1>
-                            <h1 className='text-3xl'>{slide == 0 ? form.values.mc2 : form.values.mc1}</h1>
+                            <h1 className='text-3xl'>{slide === 0 ? form.values.mc1 : form.values.mc2}</h1>
+                            <h1 className='text-3xl'>{slide === 0 ? form.values.mc2 : form.values.mc1}</h1>
                           </div>
                           <br />
-                          <div className={slide == 0 ? 'flex gap-2 items-center justify-around' : "hidden"}>
+                          <div className={slide === 0 ? 'flex gap-2 items-center justify-around' : "hidden"}>
                             <div className='flex flex-col gap-1'>
                               {[1, 2, 3, 4, 5, 6].map((num) => (
                                 <VoteButton count={minutoIda.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, minutoIda, setMinutoIda)} />
@@ -280,7 +279,7 @@ const Votacion = () => {
                               }
                             </div>
                           </div>
-                          <div className={slide == 1 ? 'flex gap-2 items-center justify-around' : "hidden"}>
+                          <div className={slide === 1 ? 'flex gap-2 items-center justify-around' : "hidden"}>
                             <div className='flex flex-col gap-1'>
                               {[1, 2, 3, 4, 5, 6].map((num) => (
                                 <VoteButton count={minutoVuelta.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, minutoVuelta, setMinutoVuelta)} />

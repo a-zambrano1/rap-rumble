@@ -1,4 +1,6 @@
-const apiUrl = "http://localhost:5000";
+import { notify } from '../../components/Utils/notify.js'
+
+const apiUrl = "http://localhost:5000"
 
 export const createUserApi = async (props) => {
     try {
@@ -9,16 +11,16 @@ export const createUserApi = async (props) => {
           },
           body: JSON.stringify({
             username: props.username,
-            aka: props.aka,
-            email: props.email,
             password: props.password,
-            profilePicture: ""
+            email: props.email,
+            aka: props.aka,
+            profilePicture: "",
           }),
-        });
-        return response.json();
+        })
+        return response.json()
     
       } catch (error) {
-        console.log(error);
-        //notify("error", "Error al iniciar sesión.");
+        console.log(error)
+        notify("error", "Error al iniciar sesión.")
       }
-    };
+}

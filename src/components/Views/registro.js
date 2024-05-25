@@ -1,10 +1,12 @@
-import React, {useState} from 'react'
+import React from 'react'
 import '../../styles/styles.css'
 import bg from '../../media/bg.png'
 import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from "@mantine/form"
 import { notify } from '../Utils/notify'
 import {createUserApi} from '../../Services/APIS/CreateUser'
+import { getUserByNameApi } from '../../Services/APIS/GetUserByName'
+import { getUserByEmailApi } from '../../Services/APIS/GetUserByEmail'
 
 function Registro() {
     const navigate = useNavigate()
@@ -12,6 +14,16 @@ function Registro() {
     const createUser = async (props) => {
         let result = await createUserApi(props)
         return result
+    }
+
+    const getUserByName = async (name) => {
+      let result = await getUserByNameApi(name);
+      return result;
+    }
+    
+    const getUserByEmail = async (email) => {
+      let result = await getUserByEmailApi(email);
+      return result;
     }
 
     const form = useForm({
@@ -24,14 +36,20 @@ function Registro() {
         },
       })
 
-      const handleSubmit = () => {  
+      const handleSubmit = async () => {  
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+        const apiName = await getUserByName(form.values.username)
+        const apiEmail = await getUserByEmail(form.values.email)
 
         if (form.values.username === "" || form.values.aka === "" || form.values.correo === "" || form.values.password === "" || form.values.password2 === ""){
           notify("warning", "Por favor llena todos los campos")
         } else if (!emailRegex.test(form.values.email)){
             notify("warning", "Correo no valido")
+        } else if (apiName.username === form.values.username){
+          notify("warning", "El nombre de usuario ya existe")
+        } else if (apiEmail.email === form.values.email){
+          notify("warning", "El correo ya existe")
         } else if (!passwordRegex.test(form.values.password)){
             notify("warning", "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un caracter especial")
         } else if (form.values.password !== form.values.password2){
@@ -39,6 +57,7 @@ function Registro() {
         } else {
           notify("success", "Usuario registrado correctamente")
           createUser(form.values)
+          console.log(form.values)
           navigate(`/`)
         }
       }

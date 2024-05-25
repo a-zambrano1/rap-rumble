@@ -7,22 +7,36 @@ import uderap from'../../media/uderap.png'
 import x from'../../media/x.png'
 import rapero from'../../media/rapero.png'
 import bg from'../../media/bg.png'
-import { getUsersByCompetitionApi } from '../../Services/APIS/GetUsersByCompetition'
+import { getCompetitorsApi } from '../../Services/APIS/GetCompetitors'
+import { getNumberOfDaysApi } from '../../Services/APIS/GetNumberOfDays'
 
 function Inicio()  {
-const navigate = useNavigate();
+const navigate = useNavigate()
 
-const [users, setUsers] = useState([]);
+const [users, setUsers] = useState([])
+const [days, setDays] = useState([])
 
-const getUsersByCompetition = async (competition) => {
-  let result = await getUsersByCompetitionApi(competition);
-  setUsers(result);
-};
+
+const getCompetitors = async (competition) => {
+  let result = await getCompetitorsApi(competition)
+  setUsers(result)
+}
+
+const GetNumberOfDays = async (competition) => {
+  let result = await getNumberOfDaysApi(competition)
+  setDays(result.daysCount)
+}
 
 useEffect(() => {
-  getUsersByCompetition("1");
+  getCompetitors("1")
+  GetNumberOfDays("1")
 }
-, []);
+, [])
+
+const handleSubmit = () => {
+  console.log(days)
+  navigate(`/jornada`, { state: { data: days } })
+}
 
   return (
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill'}}>
@@ -53,12 +67,12 @@ useEffect(() => {
               </tr>
             </thead>
               <tbody>
-                {users.sort((a, b) => b.score - a.score).map((user, index) => (
+                {users.sort((a, b) => b.ptb - a.ptb).map((user, index) => (
                   <tr key={index}>
                     <td className='p-2'>{index + 1}</td>
                     <td className='p-2'>{user.aka}</td>
                     <td className='p-2'>{user.score}</td>
-                    <td className='p-2'>{user.score}</td>
+                    <td className='p-2'>{user.ptb}</td>
                   </tr>
                 ))}
               </tbody>
@@ -69,9 +83,9 @@ useEffect(() => {
       </div>
       <div className='flex flex-col items-center w-4/5'>
         <h1 className='text-[30px] text-[#3d405b]'>Última fecha!</h1>
-        <button onClick={() => navigate('/jornada')} className='flex w-4/5 justify-evenly items-center rounded-3xl size bg-verde px-2 hover:bg-verdesito text-white text-[30px]'> 
+        <button onClick={handleSubmit} className='flex w-4/5 justify-evenly items-center rounded-3xl size bg-verde px-2 hover:bg-verdesito text-white text-[30px]'> 
           <img className='p-2' src={micro} alt="uderap"/>
-          Fecha #2
+          Fecha #{days} 
         </button>
       </div>
       <hr class="w-4/5 h-0.5 bg-[#000000]"/>
@@ -79,7 +93,7 @@ useEffect(() => {
         <button onClick={() => navigate('/registro_usuario')} className='rounded-3xl hover:bg-verdesito bg-verde text-white' >Registro
           <img className='p-2 w-[100px] h-[90px]' src={rapero} alt="rapper"/>
         </button>
-        <button onClick={() => navigate('/ingreso_juez')} className='rounded-3xl hover:bg-verdesito bg-verde text-white' >Ingreso
+        <button onClick={() => navigate('/ingreso')} className='rounded-3xl hover:bg-verdesito bg-verde text-white' >Ingreso
           <img className='p-2 w-[100px] h-[90px]' src={x} alt="x"/>
         </button>
       </div>

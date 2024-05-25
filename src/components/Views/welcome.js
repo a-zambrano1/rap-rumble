@@ -1,8 +1,7 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
 import '../../styles/styles.css'
 import bg from '../../media/bg.png'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import snoop from '../../media/snoop.png'
 import hat from '../../media/hat.png'
 

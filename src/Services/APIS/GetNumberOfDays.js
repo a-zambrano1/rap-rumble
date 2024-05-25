@@ -1,8 +1,8 @@
 const apiUrl = "http://localhost:5000";
 
-export const getUsersByCompetitionApi = async (competition) => {
+export const getNumberOfDaysApi = async (competition) => {
   try {
-    const response = await fetch(`${apiUrl}/api/v1/competitions/${competition}/members`, {
+    const response = await fetch(`${apiUrl}/api/v1/days/searchBy/${competition}/count`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -12,6 +12,5 @@ export const getUsersByCompetitionApi = async (competition) => {
 
   } catch (error) {
     console.log(error);
-    //notify("error", "Error al iniciar sesión.");
   }
 };
