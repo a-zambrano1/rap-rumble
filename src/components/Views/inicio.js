@@ -23,7 +23,7 @@ const getCompetitors = async (competition) => {
 }
 
 const GetNumberOfDays = async (competition) => {
-  let result = await getNumberOfDaysApi(competition)
+  let result = await getNumberOfDaysApi(competition) || 1
   setDays(result.daysCount)
 }
 
