@@ -2,23 +2,39 @@ import React, { useState, useEffect } from 'react'
 import '../../styles/styles.css'
 import bg from '../../media/bg.png'
 import { getMembersByCompetitionApi } from '../../Services/APIS/GetMembersByCompetition'
+import ModalAdmin from '../Utils/ModalAdmin'
+import { set } from 'firebase/database'
+import { notify } from '../Utils/notify'
 
 function Admin() {
 
   const [akaShown, setAkaShown] = useState('user')
   const [members, setMembers] = useState([])
+  const [isButtonClicked, setIsButtonClicked] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedButton, setSelectedButton] = useState(null)
+
+  const handleCancel = () => {
+    notify("error", "No se ha podido añadir el miembro. Inténtalo de nuevo.")
+    setIsModalOpen(false)
+  }
 
   const GetMembersByCompetition = async (competition) => {
     let result = await getMembersByCompetitionApi(competition)
     setMembers(result)
   }
-  
+
+  const handleSubmit = (e) => {
+    setIsModalOpen(true);
+  }
+
   useEffect(() => {
     GetMembersByCompetition("1")
-    setAkaShown('Zzatanas')
+    setAkaShown('Admin')
   }
-  , [])
-  
+    , [])
+
+
   return (
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill' }}>
       <div className='flex flex-col min-w-[25%] max-w-[90%] gap-9 my-auto py-7 items-center border-4 rounded-3xl border-black bg-white'>
@@ -31,33 +47,42 @@ function Admin() {
             <h1 className='text-[30px] text-[#3d405b] text-center'>Miembros de UdeRap</h1>
             <hr class="w-4/5 h-0.5 bg-[#000000]" />
             <div className="flex w-full justify-center items-center h-64" style={{ overflow: "auto" }}>
-            {members != null ?
-              <table className='table-auto'>
-                <thead className='sticky top-0 bg-white'>
-                  <tr className='text-verde'>
-                    <th className='p-2'>A.K.A</th>
-                    <th className='p-2'>Rol</th>
-                    <th className='p-2'>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {members.map((member, index) => (
-                    <tr key={index}>
-                      <td className='p-2'>{member.aka}</td>
-                      <td className='p-2'>{member.roleName}</td>
-                      <td className='flex p-2 gap-3'>
-                        <button className='bg-verdesito hover:bg-verde text-white font-bold py-2 px-2 rounded'>Editar</button>
-                        {member.idRole === 1 ? null : <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded'>Eliminar</button>}
-                      </td>
+              {members != null ?
+                <table className='table-auto'>
+                  <thead className='sticky top-0 bg-white'>
+                    <tr className='text-verde'>
+                      <th className='p-2'>A.K.A</th>
+                      <th className='p-2'>Rol</th>
+                      <th className='p-2'>Acciones</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            : <p>Cargando miembros...</p>}
+                  </thead>
+                  <tbody>
+                    {members.map((member, index) => (
+                      <tr key={index}>
+                        <td className='p-2'>{member.aka}</td>
+                        <td className='p-2'>{member.roleName}</td>
+                        <td className='flex p-2 gap-3'>
+                          <button className='bg-verdesito hover:bg-verde text-white font-bold py-2 px-2 rounded'>Editar</button>
+                          {member.idRole === 1 ? null : <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded'>Eliminar</button>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                : <p>Cargando miembros...</p>}
             </div>
             <hr class="w-4/5 h-0.5 bg-[#000000]" />
             <div>
-              <button className='flex items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-10/12 p-2' >Añadir Miembros</button>
+              <button
+                onClick={() => {
+                  handleSubmit()
+                  setIsButtonClicked(true)
+                  setSelectedButton(null)
+                }}
+                className='flex items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-10/12 p-2' >Añadir Miembros</button>
+              <ModalAdmin isOpen={isModalOpen} onCancel={handleCancel}>
+                Administrar Miembros
+              </ModalAdmin>
             </div>
           </div>
         </section>

@@ -10,7 +10,7 @@ export const createMemberApi = async (props) => {
           body: JSON.stringify({
             idUserMember: props.idUserMember,
             idCompetitionMember: props.idCompetitionMember,
-            idRol: props.idRol,
+            idRole: props.idRol,
             score: props.score,
             ptb: props.ptb,
           }),
