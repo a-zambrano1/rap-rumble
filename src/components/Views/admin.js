@@ -3,8 +3,11 @@ import '../../styles/styles.css'
 import bg from '../../media/bg.png'
 import { getMembersByCompetitionApi } from '../../Services/APIS/GetMembersByCompetition'
 import ModalAdmin from '../Utils/ModalAdmin'
+import ModalEdit from '../Utils/ModalEdit'
 import { set } from 'firebase/database'
 import { notify } from '../Utils/notify'
+import { Modal } from 'bootstrap'
+
 
 function Admin() {
 
@@ -19,12 +22,21 @@ function Admin() {
     setIsModalOpen(false)
   }
 
+  const handleCancelEdit = () => {
+    notify("error", "No se editado ningún miembro.")
+    setIsModalOpen(false)
+  }
+
   const GetMembersByCompetition = async (competition) => {
     let result = await getMembersByCompetitionApi(competition)
     setMembers(result)
   }
 
   const handleSubmit = (e) => {
+    setIsModalOpen(true);
+  }
+
+  const handleSubmitEdit = (e) => {
     setIsModalOpen(true);
   }
 
@@ -62,7 +74,11 @@ function Admin() {
                         <td className='p-2'>{member.aka}</td>
                         <td className='p-2'>{member.roleName}</td>
                         <td className='flex p-2 gap-3'>
-                          <button className='bg-verdesito hover:bg-verde text-white font-bold py-2 px-2 rounded'>Editar</button>
+                          <button className='bg-verdesito hover:bg-verde text-white font-bold py-2 px-2 rounded' onClick={() => {
+                            handleSubmitEdit()
+                            setIsButtonClicked(true)
+                            setSelectedButton(null)
+                          }}>Editar</button>
                           {member.idRole === 1 ? null : <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded'>Eliminar</button>}
                         </td>
                       </tr>
@@ -81,8 +97,9 @@ function Admin() {
                 }}
                 className='flex items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-10/12 p-2' >Añadir Miembros</button>
               <ModalAdmin isOpen={isModalOpen} onCancel={handleCancel}>
-                Administrar Miembros
+                Añadir Miembros
               </ModalAdmin>
+              <ModalEdit isOpen={isModalOpen} onCancel={handleCancelEdit}>Editar Miembros</ModalEdit>
             </div>
           </div>
         </section>
