@@ -13,8 +13,10 @@ function Admin() {
 
   const [akaShown, setAkaShown] = useState('user')
   const [members, setMembers] = useState([])
+  const [selectedMember, setSelectedMember] = useState()
   const [isButtonClicked, setIsButtonClicked] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [selectedButton, setSelectedButton] = useState(null)
 
   const handleCancel = () => {
@@ -24,7 +26,7 @@ function Admin() {
 
   const handleCancelEdit = () => {
     notify("error", "No se editado ningún miembro.")
-    setIsModalOpen(false)
+    setIsModalEditOpen(false)
   }
 
   const GetMembersByCompetition = async (competition) => {
@@ -36,8 +38,8 @@ function Admin() {
     setIsModalOpen(true);
   }
 
-  const handleSubmitEdit = (e) => {
-    setIsModalOpen(true);
+  const handleSubmitEdit = () => {
+    setIsModalEditOpen(true)
   }
 
   useEffect(() => {
@@ -75,10 +77,12 @@ function Admin() {
                         <td className='p-2'>{member.roleName}</td>
                         <td className='flex p-2 gap-3'>
                           <button className='bg-verdesito hover:bg-verde text-white font-bold py-2 px-2 rounded' onClick={() => {
+                            setSelectedMember(member.idMember)
                             handleSubmitEdit()
                             setIsButtonClicked(true)
                             setSelectedButton(null)
                           }}>Editar</button>
+                          <ModalEdit isOpen={isModalEditOpen} onCancel={handleCancelEdit} member={selectedMember}>Editar Miembros</ModalEdit>
                           {member.idRole === 1 ? null : <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded'>Eliminar</button>}
                         </td>
                       </tr>
@@ -99,7 +103,6 @@ function Admin() {
               <ModalAdmin isOpen={isModalOpen} onCancel={handleCancel}>
                 Añadir Miembros
               </ModalAdmin>
-              <ModalEdit isOpen={isModalOpen} onCancel={handleCancelEdit}>Editar Miembros</ModalEdit>
             </div>
           </div>
         </section>

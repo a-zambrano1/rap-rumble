@@ -37,12 +37,11 @@ const ModalAdmin = ({ isOpen, onCancel, children }) => {
         const username = document.getElementById('username').value
         const apiName = await getUserByName(username)
         if (apiName.username === username) {
-            //Se guarda el valor del desplegable
-            var e = document.getElementById("dropdown");
-            var value = e.value;
-            const formMember = [apiName.id, 1, value, 0, 0]
-            createMemberApi(formMember.values)
-            console.log(formMember.values)
+            var member = document.getElementById("dropdown").value;
+            console.log(member)
+            const formMember = [apiName.id, 1, member, 0, 0]
+            createMemberApi(formMember)
+            console.log(formMember)
             notify("success", "El miembro ha sido agregado correctamente a la competencia")
         } else {
             notify("error", "No fue posible agregar el miembro a la competencia. Inténtalo de nuevo.")
