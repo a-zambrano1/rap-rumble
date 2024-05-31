@@ -53,12 +53,12 @@ const ModalAdmin = ({ isOpen, onCancel, children }) => {
             <div style={{ backgroundColor: 'white', padding: '3em', maxWidth: '90%', maxHeight: '90%', overflow: 'auto', borderRadius: '10%' }}>
                 <div className='flex flex-col items-center gap-7 text-[25px] text-[#3d405b]'>
                     {children}
-                    <div className='flex flex-col g-2 p-2 w-full justify-around'>
-                        <div className='flex g-2 w-full items-center'>
+                    <div className='flex flex-col gap-7 p-2 w-full justify-around'>
+                        <div className='flex gap-4 w-full items-center'>
                             <input id="username" type="text" placeholder="Username" className='border-2 border-black rounded-xl p-3 g-2' />
                             <button onClick={handleSubmitVerification} className='bg-verdesito hover:bg-verde text-white p-3 rounded-xl'>Verificar</button>
                         </div>
-                        <select id='dropdown' className='g-4 p-3 border-2'>
+                        <select id='dropdown' className='g-4 p-3 border-2 border-gray-500'>
                             <option value="1">Admin</option>
                             <option value="2">Juez</option>
                             <option value="3">Competidor</option>

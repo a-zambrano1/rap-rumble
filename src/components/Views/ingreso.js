@@ -2,32 +2,43 @@ import React from "react"
 import '../../styles/styles.css'
 import bg from '../../media/bg.png'
 import { useNavigate, Link } from 'react-router-dom'
-import { getUserByNameApi } from '../../Services/APIS/GetUserByName'
+import { getUserByEmailApi } from '../../Services/APIS/GetUserByEmail'
 import { notify } from '../Utils/notify'
+import { loginVerificationApi } from "../../Services/APIS/LoginVerification"
 
 function Ingreso() {
 
   const navigate = useNavigate()
 
-  const getUserByName = async (name) => {
-    let result = await getUserByNameApi(name);
-    return result;
+  const getUserByEmail = async (email) => {
+    let result = await getUserByEmailApi(email)
+    return result
   }
 
-  const handleLogin = async () => {
-    const userName = document.getElementById('username').value
-    const password = document.getElementById('password').value
-    const apiName = await getUserByName(userName)
+  const loginVerification = async (email, password) => {
+    let result = await loginVerificationApi(email, password)
+    return result
+  }
 
-    if (userName === "" || password === ""){
+
+  const handleLogin = async () => {
+    const userEmail = document.getElementById('email').value
+    const password = document.getElementById('password').value
+    console.log(userEmail, password)
+    const apiEmail = await getUserByEmail(userEmail)
+
+    if (userEmail === "" || password === ""){
       notify("warning", "Por favor llena todos los campos")
-    } else if (apiName.username !== userName){
-      notify("warning", "El usuario no existe")
-    } /*else if (apiName.password !== password){
-      notify("warning", "Contraseña incorrecta")
-    }*/ else {
-      notify("success", "Bienvenido")
-      navigate('/welcome')
+    } else if (apiEmail.email !== userEmail){
+      notify("warning", "El correo no existe")
+    } else {
+      const login = await loginVerification(userEmail, password)
+      if (login.userId){
+        notify("success", "Bienvenido")
+        navigate('/welcome')
+      } else {
+        notify("warning", "Contraseña incorrecta")
+      }
     }
   }
 
@@ -46,7 +57,8 @@ function Ingreso() {
           </div>
           <div className="flex flex-col items-center gap-4">
             <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
-            id="username"
+            id="email"
+            type="email"
             placeholder="Nombre de Usuario"
             />
             <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto"

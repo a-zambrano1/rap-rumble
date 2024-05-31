@@ -17,13 +17,14 @@ const ModalResult = ({ isOpen, onCancel, batallaData }) => {
         <div style={{ backgroundColor: 'white', padding: '3em', maxWidth: '90%', maxHeight: '90%', overflow: 'auto', borderRadius: '10%' }}>
         <div className='flex flex-col items-center gap-7 text-[25px] text-[#3d405b]'>
             <div>
+                <h1>Resultado de la batalla</h1>
                 {batallaData && (
-                <>
-                    <span>{batallaData.mc1}</span>
-                    <span>{batallaData.pts1}</span>
-                    <span>{batallaData.mc2}</span>
-                    <span>{batallaData.pts2}</span>
-                </>
+                <div className="flex flex-row justify-between">
+                    <div className="flex flex-col text-center"><span>{batallaData.mc1}</span>
+                    <span>{batallaData.pts1}</span></div>
+                    <div  className="flex flex-col text-center"><span>{batallaData.mc2}</span>
+                    <span>{batallaData.pts2}</span></div>
+                </div>
                 )}
             </div>
             <div className='flex w-full justify-around'>

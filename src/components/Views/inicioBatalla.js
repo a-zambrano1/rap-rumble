@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import banner from '../../media/bg-hiphop.jpg'
 import uderap from '../../media/uderap.png'
 import { Link } from 'react-router-dom'
@@ -6,10 +6,18 @@ import bg from'../../media/bg.png'
 import { useForm } from "@mantine/form"
 import { notify } from '../Utils/notify'
 import { useNavigate } from 'react-router-dom'
+import { getCompetitorsApi } from '../../Services/APIS/GetCompetitors'
+
 
 const InicioBatalla = () => {
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const [users, setUsers] = useState([])
+
+  const getCompetitors = async (competition) => {
+    let result = await getCompetitorsApi(competition)
+    setUsers(result)
+  }
 
   const form = useForm({
     initialValues: {
@@ -23,11 +31,19 @@ const InicioBatalla = () => {
   const handleSubmit = () => {
     if (form.values.lugar === "" || form.values.mc1 === "" || form.values.mc2 === "") {
       notify("warning", "Por favor llena todos los campos")
-    } else {
+    } else if (form.values.mc1 === form.values.mc2) {
+      notify("warning", "Los MCs no pueden ser el mismo")
+    }
+    else {
+      console.log(form.values)
       navigate(`/votacion`, { state: { data: form.values } })
     }
   }
 
+  useEffect(() => {
+    getCompetitors("1")
+  }
+  , [])
 
   return (
     <div className='flex justify-center h-screen bg-contain' style={{ backgroundImage: `url(${bg})` }}>
@@ -44,21 +60,37 @@ const InicioBatalla = () => {
             </div>
           </div>
           <div className="flex flex-col items-center p-5 gap-4">
+            <select className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto" 
+              id="day"
+              placeholder="Número de Jornada">
+              {Array.from({ length: 15 }, (_, i) => i + 1).map((value) => (
+                <option key={value} value={value}>
+                  {`Jornada #${value}`}
+                </option>
+              ))}
+            </select>
             <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
               id="lugar"
               placeholder="Localización de la Jornada"
               onChange={(e) => form.setFieldValue('lugar', e.target.value)}
             />
-            <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
-              id="mc1"
-              placeholder="MC1"
-              onChange={(e) => form.setFieldValue('mc1', e.target.value)}
-            />
-            <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
-              id="mc2"
-              placeholder="MC2"
-              onChange={(e) => form.setFieldValue('mc2', e.target.value)}
-            />
+            <select className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto" id="mc1" onChange={(e) => form.setFieldValue('mc1', e.target.value)}>
+              <option value="" disabled selected>MC #1</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.aka}
+                </option>
+              ))}
+            </select>
+            <select className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto" id="mc1" onChange={(e) => form.setFieldValue('mc2', e.target.value)}>
+              <option value="" disabled selected>MC #2</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.aka}
+                </option>
+              ))}
+            </select>
+            
             <button className="rounded-xl bg-verde hover:bg-verdesito w-3/5 self-center text-white p-3 h-auto" onClick={handleSubmit}>
               <span>Iniciar votación</span>
             </button>

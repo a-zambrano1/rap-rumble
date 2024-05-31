@@ -35,7 +35,7 @@ useEffect(() => {
 
 const handleSubmit = () => {
   console.log(days)
-  navigate(`/jornada`, { state: { data: days } })
+  navigate(`/jornada`, { state: { data: 3 } })
 }
 
   return (

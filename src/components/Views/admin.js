@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react'
 import '../../styles/styles.css'
 import bg from '../../media/bg.png'
 import { getMembersByCompetitionApi } from '../../Services/APIS/GetMembersByCompetition'
+import { deleteMemberApi } from '../../Services/APIS/DeleteMember'
 import ModalAdmin from '../Utils/ModalAdmin'
 import ModalEdit from '../Utils/ModalEdit'
-import { set } from 'firebase/database'
+import ModalDelete from '../Utils/ModalDelete'
 import { notify } from '../Utils/notify'
-import { Modal } from 'bootstrap'
 
 
 function Admin() {
@@ -14,10 +14,9 @@ function Admin() {
   const [akaShown, setAkaShown] = useState('user')
   const [members, setMembers] = useState([])
   const [selectedMember, setSelectedMember] = useState()
-  const [isButtonClicked, setIsButtonClicked] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
-  const [selectedButton, setSelectedButton] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false)
+  const [isModalDelete, setIsModalDelete] = useState(false)
 
   const handleCancel = () => {
     notify("error", "No se ha podido añadir el miembro. Inténtalo de nuevo.")
@@ -25,13 +24,23 @@ function Admin() {
   }
 
   const handleCancelEdit = () => {
-    notify("error", "No se editado ningún miembro.")
+    notify("error", "No se ha editado ningún miembro.")
     setIsModalEditOpen(false)
   }
 
+  const handleCancelDelete = () => {
+    notify("error", "No se ha eliminado ningún miembro.")
+    setIsModalDelete(false)
+  }
+  
   const GetMembersByCompetition = async (competition) => {
     let result = await getMembersByCompetitionApi(competition)
     setMembers(result)
+  }
+
+  const DeleteMember = async (idMember) => {
+    let result = await deleteMemberApi(idMember)
+    return result
   }
 
   const handleSubmit = (e) => {
@@ -42,11 +51,29 @@ function Admin() {
     setIsModalEditOpen(true)
   }
 
+  const handleDelete = () => {
+    setIsModalDelete(true)
+  }
+
+  const handleConfirm = async () => {
+    try {
+    const deleted = await DeleteMember(selectedMember)
+    if (deleted.message === 'member deleted') {
+      notify("success", "Miembro eliminado correctamente.")
+    } else {
+      notify("error", "No se ha podido eliminar el miembro. Inténtalo de nuevo.")
+    }
+  } catch (error) {
+    console.error(error)
+  }
+  setIsModalDelete(false)
+}
+
   useEffect(() => {
     GetMembersByCompetition("1")
     setAkaShown('Admin')
   }
-    , [])
+    , [isModalOpen, isModalEditOpen, isModalDelete])
 
 
   return (
@@ -57,7 +84,7 @@ function Admin() {
           <h1 className='flex text-[18px]'>Bienvenido al Panel de Administración</h1>
         </section>
         <section className='flex flex-col items-center w-full px-2'>
-          <div className='flex flex-col justify-center items-center w-4/5 gap-5'>
+          <div className='flex flex-col justify-center items-center gap-5'>
             <h1 className='text-[30px] text-[#3d405b] text-center'>Miembros de UdeRap</h1>
             <hr class="w-4/5 h-0.5 bg-[#000000]" />
             <div className="flex w-full justify-center items-center h-64" style={{ overflow: "auto" }}>
@@ -75,15 +102,17 @@ function Admin() {
                       <tr key={index}>
                         <td className='p-2'>{member.aka}</td>
                         <td className='p-2'>{member.roleName}</td>
-                        <td className='flex p-2 gap-3'>
+                        <td className='flex justify-center p-2 gap-3'>
                           <button className='bg-verdesito hover:bg-verde text-white font-bold py-2 px-2 rounded' onClick={() => {
                             setSelectedMember(member.idMember)
                             handleSubmitEdit()
-                            setIsButtonClicked(true)
-                            setSelectedButton(null)
                           }}>Editar</button>
-                          <ModalEdit isOpen={isModalEditOpen} onCancel={handleCancelEdit} member={selectedMember}>Editar Miembros</ModalEdit>
-                          {member.idRole === 1 ? null : <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded'>Eliminar</button>}
+                          <ModalEdit isOpen={isModalEditOpen} onCancel={handleCancelEdit} member={selectedMember}>Editar Miembro</ModalEdit>
+                          {member.idRole === 1 ? null : <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded'
+                            onClick={() => {
+                              setSelectedMember(member.idMember)
+                              handleDelete()
+                            }}>Eliminar</button>}
                         </td>
                       </tr>
                     ))}
@@ -91,13 +120,14 @@ function Admin() {
                 </table>
                 : <p>Cargando miembros...</p>}
             </div>
+            <ModalDelete isOpen={isModalDelete} onConfirm={handleConfirm} onCancel={handleCancelDelete}>
+                ¿Estás seguro de enviar tu voto?
+            </ModalDelete>
             <hr class="w-4/5 h-0.5 bg-[#000000]" />
             <div>
               <button
                 onClick={() => {
                   handleSubmit()
-                  setIsButtonClicked(true)
-                  setSelectedButton(null)
                 }}
                 className='flex items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-10/12 p-2' >Añadir Miembros</button>
               <ModalAdmin isOpen={isModalOpen} onCancel={handleCancel}>
