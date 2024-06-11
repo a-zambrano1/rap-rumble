@@ -34,6 +34,7 @@ function Ingreso() {
     } else {
       const login = await loginVerification(userEmail, password)
       if (login.userId){
+        localStorage.setItem('idRole', login.idRole)
         notify("success", "Bienvenido")
         navigate('/welcome')
       } else {
