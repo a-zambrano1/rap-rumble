@@ -6,6 +6,8 @@ import { deleteMemberApi } from '../../Services/APIS/DeleteMember'
 import { updateIdRoleApi } from '../../Services/APIS/UpdateIdRole'
 import { createMemberApi } from '../../Services/APIS/CreateMember'
 import { getUserByNameApi } from '../../Services/APIS/GetUserByName'
+import { getDayIdApi } from '../../Services/APIS/GetDayId'
+import ModalDays from '../Utils/ModalDays'
 import ModalAdmin from '../Utils/ModalAdmin'
 import ModalEdit from '../Utils/ModalEdit'
 import ModalDelete from '../Utils/ModalDelete'
@@ -17,10 +19,13 @@ function Admin() {
   const [akaShown, setAkaShown] = useState('user')
   const [members, setMembers] = useState([])
   const [selectedMember, setSelectedMember] = useState()
+  const [selectedDay, setSelectedDay] = useState()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isModalEditOpen, setIsModalEditOpen] = useState(false)
   const [isModalDelete, setIsModalDelete] = useState(false)
-  const [isButtonPressed, setIsButtonPressed] = useState(false);
+  const [isModalDays, setIsModalDays] = useState(false)
+  const [dayIds, setDayIds] = useState([]);
+
 
   const handleCancel = () => {
     notify("error", "No se ha podido añadir el miembro. Inténtalo de nuevo.")
@@ -36,6 +41,11 @@ function Admin() {
     notify("error", "No se ha eliminado ningún miembro.")
     setIsModalDelete(false)
   }
+
+  const handleCancelDay = () => {
+    notify("error", "No se modificó ninguna jornada")
+    setIsModalDays(false)
+  }
   
   const GetMembersByCompetition = async (competition) => {
     let result = await getMembersByCompetitionApi(competition)
@@ -44,6 +54,11 @@ function Admin() {
 
   const DeleteMember = async (idMember) => {
     let result = await deleteMemberApi(idMember)
+    return result
+  }
+
+  const GetDayId = async (competition, numberDay) => {
+    let result = await getDayIdApi(competition, numberDay)
     return result
   }
 
@@ -59,6 +74,10 @@ function Admin() {
     setIsModalDelete(true)
   }
 
+  const handleDays = () => {
+    setIsModalDays(true)
+  }
+
   const handleAddConfirm = async () => {
     notify("success", "Miembro añadido correctamente.")
     setIsModalOpen(false)
@@ -68,6 +87,22 @@ function Admin() {
     notify("success", "Miembro editado correctamente.")
     setIsModalEditOpen(false)
   }
+
+  const handleDayConfirm = async () => {
+    notify("success", "Jornada editada correctamente.")
+    setIsModalDays(false)
+  } 
+
+  const fetchDayIds = async () => {
+    const days = []
+    for (let i = 1; i <= 15; i++) {
+      const result = await GetDayId("1", i)
+      days.push([result.enable, result.finish])
+    }
+    console.log(days)
+    return days
+  }
+
 
   const handleDeleteConfirm = async () => {
     try {
@@ -82,6 +117,15 @@ function Admin() {
   }
   setIsModalDelete(false)
 }
+
+  useEffect(() => {
+    const fetchDayIdsFromApi = async () => {
+      const result = await fetchDayIds()
+      setDayIds(result)
+    }
+
+    fetchDayIdsFromApi()
+  }, [])
 
   useEffect(() => {
     GetMembersByCompetition("1")
@@ -101,16 +145,20 @@ function Admin() {
           <div className='flex flex-col justify-center items-center gap-5'>
             <h1 className='text-[30px] text-[#3d405b] text-center'>Jornadas</h1>
             <div className='flex'>
-              {Array.from({ length: 15 }, (_, i) => i + 1).map((value, index) => (
+              {(dayIds).map((dayIds, index) => (
                 <button
                   key={index}
-                  className={`border-2 p-1 ${isButtonPressed ? 'bg-verde' : 'bg-white'}`}
-                  onClick={() => { setIsButtonPressed(true)}}
+                  className={`w-8 h-8 rounded-full border-2 ${dayIds[1] === 1 ? 'bg-gray-500' : dayIds[0] === 1 ? 'bg-green-500' : ''}`}
+                  disabled={dayIds[1] === 1}
+                  onClick={() => {setSelectedDay(index + 1)
+                                  handleDays()
+                  }}
                 >
-                  {value}
+                  {index + 1}
                 </button>
               ))}
             </div>
+            <ModalDays isOpen={isModalDays} onCancel={handleCancelDay} onConfirm={handleDayConfirm} day={selectedDay}>Editar Jornada</ModalDays>
           </div>
           <div className='flex flex-col justify-center items-center gap-5'>
             <h1 className='text-[30px] text-[#3d405b] text-center'>Miembros de UdeRap</h1>

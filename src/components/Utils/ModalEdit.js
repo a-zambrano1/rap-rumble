@@ -34,8 +34,8 @@ const ModalEdit = ({ isOpen, onCancel, onConfirm, member, children }) => {
                 <div className='flex flex-col items-center gap-5 text-[25px] text-[#3d405b]'>
                     id #{member}
                     <div className='flex flex-col items-center w-full justify-around'>
-                        <span>Nuevo rol</span>
                         <select ref={dropdownRef} className='g-4 p-3 border-2 border-gray-500 '>
+                            <option value="" disabled selected>Nuevo Rol</option>
                             <option value="1">Admin</option>
                             <option value="2">Juez</option>
                             <option value="3">Competidor</option>
