@@ -83,9 +83,8 @@ const ModalDays = ({ isOpen, onCancel, onConfirm, day, children }) => {
       >
         {children}
         <div className="flex flex-col items-center gap-5 text-[25px] text-[#3d405b]">
-          día # {day}
+          Jornada # {day}
           <div className="flex flex-col items-center w-full justify-around">
-            <span>Nuevo rol</span>
             <select
               ref={dropdownRef}
               className="g-4 p-3 border-2 border-gray-500 "

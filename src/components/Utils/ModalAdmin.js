@@ -2,6 +2,7 @@ import React from 'react'
 import { getUserByNameApi } from '../../Services/APIS/GetUserByName'
 import { notify } from '../Utils/notify'
 import { createMemberApi } from '../../Services/APIS/CreateMember'
+import { getUserMemberApi } from '../../Services/APIS/getUserMember'
 import { on } from 'process'
 
 
@@ -21,6 +22,11 @@ const ModalAdmin = ({ isOpen, onCancel, onConfirm, children }) => {
         return result;
     }
 
+    const GetUserMember = async (id) => {
+        let result = await getUserMemberApi(id)
+        return result
+    }
+
 
     const handleSubmitVerification = async () => {
         const username = document.getElementById('username').value
@@ -37,6 +43,12 @@ const ModalAdmin = ({ isOpen, onCancel, onConfirm, children }) => {
     const handleCreateMember = async () => {
         const username = document.getElementById('username').value
         const apiName = await getUserByName(username)
+        const memberId = apiName.id
+        const userMembers = await GetUserMember(memberId)
+        if (userMembers.length >= 2) {
+            notify("error", "El usuario ya tiene dos roles asignados")
+            return
+        }
         if (apiName.username === username) {
             var member = document.getElementById("dropdown").value;
             console.log(member)

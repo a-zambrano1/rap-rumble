@@ -7,16 +7,33 @@ import { useForm } from "@mantine/form"
 import { notify } from '../Utils/notify'
 import { useNavigate } from 'react-router-dom'
 import { getCompetitorsApi } from '../../Services/APIS/GetCompetitors'
+import { getDayIdApi } from '../../Services/APIS/GetDayId'
 
 
 const InicioBatalla = () => {
 
   const navigate = useNavigate()
   const [users, setUsers] = useState([])
+  const [dayIds, setDayIds] = useState([])
 
   const getCompetitors = async (competition) => {
     let result = await getCompetitorsApi(competition)
     setUsers(result)
+  }
+
+  const GetDayId = async (competition, numberDay) => {
+    let result = await getDayIdApi(competition, numberDay)
+    return result
+  }
+
+  const fetchDayIds = async () => {
+    const days = []
+    for (let i = 1; i <= 15; i++) {
+      const result = await GetDayId("1", i)
+      days.push([result.enable, result.finish])
+    }
+    console.log(days)
+    return days
   }
 
   const form = useForm({
@@ -41,9 +58,14 @@ const InicioBatalla = () => {
   }
 
   useEffect(() => {
+    const fetchDayIdsFromApi = async () => {
+      const result = await fetchDayIds()
+      setDayIds(result)
+    }
+
+    fetchDayIdsFromApi()
     getCompetitors("1")
-  }
-  , [])
+  }, [])
 
   return (
     <div className='flex justify-center h-screen bg-contain' style={{ backgroundImage: `url(${bg})` }}>
@@ -63,10 +85,13 @@ const InicioBatalla = () => {
             <select className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto" 
               id="day"
               placeholder="Número de Jornada">
-              {Array.from({ length: 15 }, (_, i) => i + 1).map((value) => (
-                <option key={value} value={value}>
-                  {`Jornada #${value}`}
-                </option>
+              <option value="" disabled selected>Jornada</option>
+              {(dayIds).map((dayId, index) => (
+                dayId[0] === 1 ?  
+                  <option key={index+1} value={index+1}>
+                    {`Jornada #${index+1}`}
+                  </option>
+                : null
               ))}
             </select>
             <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
