@@ -2,9 +2,10 @@ import React from 'react'
 import { getUserByNameApi } from '../../Services/APIS/GetUserByName'
 import { notify } from '../Utils/notify'
 import { createMemberApi } from '../../Services/APIS/CreateMember'
+import { on } from 'process'
 
 
-const ModalAdmin = ({ isOpen, onCancel, children }) => {
+const ModalAdmin = ({ isOpen, onCancel, onConfirm, children }) => {
     if (!isOpen) {
         return null;
     }
@@ -23,7 +24,7 @@ const ModalAdmin = ({ isOpen, onCancel, children }) => {
 
     const handleSubmitVerification = async () => {
         const username = document.getElementById('username').value
-        const apiName = await getUserByName(username)
+        const apiName = await getUserByName(username) || {}
         if (apiName.username === username) {
             notify("success", "El usuario existe")
             console.log(apiName)
@@ -40,13 +41,16 @@ const ModalAdmin = ({ isOpen, onCancel, children }) => {
             var member = document.getElementById("dropdown").value;
             console.log(member)
             const formMember = [apiName.id, 1, member, 0, 0]
-            createMemberApi(formMember)
+            try {createMemberApi(formMember)
             console.log(formMember)
-            notify("success", "El miembro ha sido agregado correctamente a la competencia")
+            } catch (error) {
+                console.log(error)
+            }
+            onConfirm()
         } else {
-            notify("error", "No fue posible agregar el miembro a la competencia. Inténtalo de nuevo.")
-
+            onCancel()
         }
+        
     }
     return (
         <div onClick={handleOuterClick} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -65,11 +69,17 @@ const ModalAdmin = ({ isOpen, onCancel, children }) => {
                         </select>
                         <input type="text" id='linkPicture' placeholder="Link a la foto de Perfil" className='border-2 border-black rounded-xl p-3 g-2' />
                     </div>
-                    <button
-                        onClick={handleCreateMember}
-                        className='bg-verdesito hover:bg-verde text-white p-3 rounded-xl'>
-                        Confirmar
-                    </button>
+                    <div className='flex w-full justify-around'>
+                        <button
+                            onClick={handleCreateMember}
+                            className='bg-verdesito hover:bg-verde text-white p-3 rounded-xl'>
+                            Confirmar
+                        </button>
+                        <button onClick={onCancel} 
+                                className='bg-red-400 hover:bg-red-500 text-white p-3 rounded-xl'>
+                                Cancelar
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

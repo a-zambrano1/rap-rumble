@@ -62,17 +62,17 @@ const handleSubmit = () => {
               <tr className='text-verde'>
                 <th className='p-2'>Posición</th>
                 <th className='p-2'>A.K.A</th>
+                <th className='p-2'>Score</th>
                 <th className='p-2'>PTB</th>
-                <th className='p-2'>PTS</th>
               </tr>
             </thead>
               <tbody>
                 {users.sort((a, b) => b.ptb - a.ptb).map((user, index) => (
                   <tr key={index}>
-                    <td className='p-2'>{index + 1}</td>
-                    <td className='p-2'>{user.aka}</td>
-                    <td className='p-2'>{user.score}</td>
-                    <td className='p-2'>{user.ptb}</td>
+                    <td className='p-2 text-center'>{index + 1}</td>
+                    <td className='p-2 text-center'>{user.aka}</td>
+                    <td className='p-2 text-center'>{user.score}</td>
+                    <td className='p-2 text-center'>{user.ptb}</td>
                   </tr>
                 ))}
               </tbody>

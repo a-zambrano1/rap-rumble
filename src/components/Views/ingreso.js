@@ -60,7 +60,7 @@ function Ingreso() {
             <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
             id="email"
             type="email"
-            placeholder="Nombre de Usuario"
+            placeholder="Correo"
             />
             <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto"
               minLength="8"
