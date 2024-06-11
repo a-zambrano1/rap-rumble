@@ -5,6 +5,8 @@ import { useNavigate, Link } from 'react-router-dom'
 import { getUserByEmailApi } from '../../Services/APIS/GetUserByEmail'
 import { notify } from '../Utils/notify'
 import { loginVerificationApi } from "../../Services/APIS/LoginVerification"
+import { getUserMemberApi } from "../../Services/APIS/getUserMember"
+import { useEffect } from "react"
 
 function Ingreso() {
 
@@ -27,14 +29,15 @@ function Ingreso() {
     console.log(userEmail, password)
     const apiEmail = await getUserByEmail(userEmail)
 
-    if (userEmail === "" || password === ""){
+    if (userEmail === "" || password === "") {
       notify("warning", "Por favor llena todos los campos")
-    } else if (apiEmail.email !== userEmail){
+    } else if (apiEmail.email !== userEmail) {
       notify("warning", "El correo no existe")
     } else {
       const login = await loginVerification(userEmail, password)
-      if (login.userId){
-        localStorage.setItem('idRole', login.idRole)
+      if (login.userId) {
+        let userMember = await getUserMemberApi(login.userId)
+        localStorage.setItem('idRole', userMember[0].idRole)
         notify("success", "Bienvenido")
         navigate('/welcome')
       } else {
@@ -42,12 +45,18 @@ function Ingreso() {
       }
     }
   }
+  useEffect(() => {
+    let idRole = localStorage.getItem('idRole')
+    if (idRole) {
+      navigate('/welcome')
+    }
+  }, [navigate])
 
   return (
-    <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill'}}>
+    <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill' }}>
       <div className='flex min-w-1/4 min-h-[65%] items-center flex-col my-auto py-7 border-4 rounded-3xl border-black bg-white'>
         <div className="flex self-start p-7 mb-5">
-            <Link to="/" className='text-[25px] font-semibold hover:text-verdesito'>« Regresar</Link>
+          <Link to="/" className='text-[25px] font-semibold hover:text-verdesito'>« Regresar</Link>
         </div>
         <div className="flex flex-col h-fit gap-6 px-7">
           <div className="flex flex-col self-start gap-4">
@@ -58,9 +67,9 @@ function Ingreso() {
           </div>
           <div className="flex flex-col items-center gap-4">
             <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
-            id="email"
-            type="email"
-            placeholder="Correo"
+              id="email"
+              type="email"
+              placeholder="Correo"
             />
             <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto"
               minLength="8"
@@ -70,7 +79,7 @@ function Ingreso() {
               placeholder="Contraseña"
             />
           </div>
-           {/* si el usuario ingresado existe pero no tiene rol de juez o de usuario aparecera un mensaje indicandole que aún no le hann asignado ninguno de estos roles*/}
+          {/* si el usuario ingresado existe pero no tiene rol de juez o de usuario aparecera un mensaje indicandole que aún no le hann asignado ninguno de estos roles*/}
           <button onClick={handleLogin} className="rounded-xl bg-verde hover:bg-verdesito w-3/5 self-center text-white p-3 h-auto">
             <span>Ingresar</span>
           </button>
