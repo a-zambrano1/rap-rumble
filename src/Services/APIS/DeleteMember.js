@@ -1,8 +1,8 @@
-const apiUrl = "http://localhost:5000";
+const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1"
 
 export const deleteMemberApi = async (idMember) => {
   try {
-    const response = await fetch(`${apiUrl}/api/v1/members/${idMember}`, {
+    const response = await fetch(`${apiUrl}/members/${idMember}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

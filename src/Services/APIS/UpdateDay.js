@@ -1,8 +1,8 @@
-const apiUrl = "http://localhost:5000";
+const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1"
 
 export const finishDayApi = async (day) => {
   try {
-    const response = await fetch(`${apiUrl}/api/v1/days/${day}/finish`, {
+    const response = await fetch(`${apiUrl}/days/${day}/finish`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +19,7 @@ export const finishDayApi = async (day) => {
 
 export const updateDayApi = async (day, enable) => {
   try {
-    const response = await fetch(`${apiUrl}/api/v1/days/${day}/enable`, {
+    const response = await fetch(`${apiUrl}/days/${day}/enable`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

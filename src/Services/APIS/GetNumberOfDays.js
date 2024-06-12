@@ -1,8 +1,8 @@
-const apiUrl = "http://localhost:5000";
+const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1"
 
 export const getNumberOfDaysApi = async (competition) => {
   try {
-    const response = await fetch(`${apiUrl}/api/v1/days/searchBy/${competition}/count`, {
+    const response = await fetch(`${apiUrl}/days/searchBy/${competition}/count`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

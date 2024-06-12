@@ -1,10 +1,10 @@
 import { notify } from '../../components/Utils/notify.js'
 
-const apiUrl = "http://localhost:5000"
+const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1"
 
 export const createVoteApi = async (props) => {
     try {
-        const response = await fetch(`${apiUrl}/api/v1/votes`, {
+        const response = await fetch(`${apiUrl}/votes`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

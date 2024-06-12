@@ -1,8 +1,8 @@
-const apiUrl = "http://localhost:5000";
+const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1"
 
 export const createMemberApi = async (arrayMember) => {
   try {
-    const response = await fetch(`${apiUrl}/api/v1/members`, {
+    const response = await fetch(`${apiUrl}/members`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
