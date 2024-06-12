@@ -18,12 +18,15 @@ const Welcome = () => {
     //{ id_competencia: 1, nombre_competencia: 'Liga UdeRAP' }
     //];
 
-    const [idRole, setIdRole] = useState('0');
+    const [idRole, setIdRole] = useState('0')
+    const [idRole2, setIdRole2] = useState('0')
 
     useEffect(() => {
-        let idRole = localStorage.getItem('idRole');
+        let idRole = localStorage.getItem('idRole')
+        let idRole2 = localStorage.getItem('idRole2')
         if (idRole) {
-            setIdRole(idRole);
+            setIdRole(idRole)
+            setIdRole2(idRole2)
         }
     }
         , []);
@@ -40,13 +43,12 @@ const Welcome = () => {
                     <h1 className='flex text-[50px]'>Hola User! Qué quieres hacer hoy?</h1>
                 </section>
                 <section className='flex justify-evenly gap-4'>
-                    {idRole === '2' && <button id='juezButton' onClick={() => navigate('/inicio_batalla')} className='flex flex-col items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-4/12' >Ingresar como Juez
+                    {(idRole === '2' || idRole2 === '2')  && <button id='juezButton' onClick={() => navigate('/inicio_batalla')} className='flex flex-col items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-4/12' >Ingresar como Juez
                         <img className='p-2' src={hat} alt="rapper" />
                     </button>}
-                    {idRole === '1' && <button id='adminButton' onClick={() => navigate('/admin')} className='flex flex-col items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-4/12' >Ingresar como Admin
+                    {(idRole === '1' || idRole2 === '1' ) && <button id='adminButton' onClick={() => navigate('/admin')} className='flex flex-col items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-4/12' >Ingresar como Admin
                         <img className='p-2' src={snoop} alt="rapper" />
                     </button>}
-                    {idRole === '3' && <button id='rapperButton' className='flex flex-col items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-4/12' >Soy un Rapper</button>}
                 </section>
                 <section>
                     <button onClick={logout} className="rounded-xl bg-verde hover:bg-verdesito text-white p-3 h-auto">

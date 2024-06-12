@@ -26,7 +26,6 @@ function Ingreso() {
   const handleLogin = async () => {
     const userEmail = document.getElementById('email').value
     const password = document.getElementById('password').value
-    console.log(userEmail, password)
     const apiEmail = await getUserByEmail(userEmail)
 
     if (userEmail === "" || password === "") {
@@ -37,7 +36,17 @@ function Ingreso() {
       const login = await loginVerification(userEmail, password)
       if (login.userId) {
         let userMember = await getUserMemberApi(login.userId)
+        console.log(userMember)
+        if (userMember.message === "member not found") {
+          notify("info", "Aún no se le ha asignado un rol")
+          return
+        }
         localStorage.setItem('idRole', userMember[0].idRole)
+        if (userMember[1]) {
+          localStorage.setItem('idRole2', userMember[1].idRole);
+        } else {
+          localStorage.setItem('idRole2', '0');
+        }
         notify("success", "Bienvenido")
         navigate('/welcome')
       } else {
