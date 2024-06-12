@@ -45,13 +45,26 @@ const ModalAdmin = ({ isOpen, onCancel, onConfirm, children }) => {
         const apiName = await getUserByName(username)
         const memberId = apiName.id
         const userMembers = await GetUserMember(memberId)
+        var member = parseInt(document.getElementById("dropdown").value)
+        console.log(member)
         if (userMembers.length >= 2) {
             notify("error", "El usuario ya tiene dos roles asignados")
             return
         }
+        if (userMembers.length === 1) {
+            console.log(userMembers[0].idRole)
+            if (userMembers[0].idRole === member) {
+                notify("error", "El usuario ya tiene ese rol asignado")
+                return
+            } else if (userMembers[0].idRole === 3 && member === 2) {
+                notify("error", "El usuario ya es Competidor, por ende no puede ser juez")
+                return
+            } else if (userMembers[0].idRole === 2 && member === 3) {
+                notify("error", "El usuario ya es Juez, por ende no puede ser competidor")
+                return
+            }
+        }
         if (apiName.username === username) {
-            var member = document.getElementById("dropdown").value;
-            console.log(member)
             const formMember = [apiName.id, 1, member, 0, 0]
             try {createMemberApi(formMember)
             console.log(formMember)

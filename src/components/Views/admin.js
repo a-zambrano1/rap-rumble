@@ -12,12 +12,14 @@ import ModalAdmin from '../Utils/ModalAdmin'
 import ModalEdit from '../Utils/ModalEdit'
 import ModalDelete from '../Utils/ModalDelete'
 import { notify } from '../Utils/notify'
+import { set } from 'firebase/database'
 
 
 function Admin() {
 
   const [akaShown, setAkaShown] = useState('user')
   const [members, setMembers] = useState([])
+  const [selectedUser, setSelectedUser] = useState()
   const [selectedMember, setSelectedMember] = useState()
   const [selectedDay, setSelectedDay] = useState()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -99,10 +101,14 @@ function Admin() {
       const result = await GetDayId("1", i)
       days.push([result.enable, result.finish])
     }
-    console.log(days)
     return days
   }
 
+  const fetchDayIdsFromApi = async () => {
+    const result = await fetchDayIds()
+    setDayIds(result)
+    console.log(result)
+  }
 
   const handleDeleteConfirm = async () => {
     try {
@@ -119,13 +125,8 @@ function Admin() {
 }
 
   useEffect(() => {
-    const fetchDayIdsFromApi = async () => {
-      const result = await fetchDayIds()
-      setDayIds(result)
-    }
-
     fetchDayIdsFromApi()
-  }, [])
+  }, [selectedDay, setSelectedDay, isModalDays])
 
   useEffect(() => {
     GetMembersByCompetition("1")
@@ -185,6 +186,7 @@ function Admin() {
                           <td className='flex justify-center p-2 gap-3'>
                           <button className='bg-verdesito hover:bg-verde text-white font-bold py-2 px-2 rounded' onClick={() => {
                             setSelectedMember(member.idMember)
+                            setSelectedUser(member.idUser)
                             handleSubmitEdit()
                           }}>Editar</button>
                             {member.idRole === 1 ? null : <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded'
@@ -196,7 +198,7 @@ function Admin() {
                         </tr>
                       ))}
                     </tbody>
-                  <ModalEdit isOpen={isModalEditOpen} onCancel={handleCancelEdit} onConfirm={handleEditConfirm} member={selectedMember}>Editar Miembro</ModalEdit>
+                  <ModalEdit isOpen={isModalEditOpen} onCancel={handleCancelEdit} onConfirm={handleEditConfirm} member={selectedMember} user={selectedUser}>Editar Miembro</ModalEdit>
                 </table>
                 : <p>Cargando miembros...</p>}
             </div>

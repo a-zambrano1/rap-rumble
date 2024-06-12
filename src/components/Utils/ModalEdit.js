@@ -1,12 +1,19 @@
 import React, { useRef } from 'react'
 import { updateIdRoleApi } from '../../Services/APIS/UpdateIdRole'
+import { getUserMemberApi } from '../../Services/APIS/getUserMember'
 import { notify } from './notify'
+import { on } from 'process'
 
-const ModalEdit = ({ isOpen, onCancel, onConfirm, member, children }) => {
+const ModalEdit = ({ isOpen, onCancel, onConfirm, member, user, children }) => {
     const dropdownRef = useRef(null)
 
     if (!isOpen) {
         return null
+    }
+
+    const GetUserMember = async (id) => {
+        let result = await getUserMemberApi(id)
+        return result
     }
 
     const handleOuterClick = (e) => {
@@ -16,8 +23,25 @@ const ModalEdit = ({ isOpen, onCancel, onConfirm, member, children }) => {
     }
 
     const handleEditRole = async () => {
-        var newRole = dropdownRef.current.value
-        console.log(newRole)
+        var newRole = parseInt(dropdownRef.current.value)
+        const userMembers = await GetUserMember(user)
+        console.log(user)
+        console.log(userMembers)
+        if (!userMembers[1]) {
+            userMembers[1] = { idRole: 0 }
+        }
+        if (userMembers.length >= 1) {
+            if (userMembers[0].idRole === newRole || userMembers[1].idRole === newRole) {
+                notify("error", "El usuario ya tiene ese rol asignado")
+                return
+            } else if ((userMembers[0].idRole  === 3 || userMembers[1].idRole === 3) && newRole === 2) {
+                notify("error", "El usuario ya es Competidor, por ende no puede ser juez")
+                return
+            } else if ((userMembers[0].idRole === 2 || userMembers[1].idRole === 2) && newRole === 3) {
+                notify("error", "El usuario ya es Juez, por ende no puede ser competidor")
+                return
+            }
+        }
         try {
             let result = await updateIdRoleApi(member, newRole)
             console.log(result)
@@ -25,6 +49,7 @@ const ModalEdit = ({ isOpen, onCancel, onConfirm, member, children }) => {
             console.log(error)
             notify("error", "No se ha podido editar el rol del miembro. Inténtalo de nuevo.")
         }
+        onConfirm()
     }
 
     return (
@@ -43,8 +68,7 @@ const ModalEdit = ({ isOpen, onCancel, onConfirm, member, children }) => {
                     </div>
                     <div className='flex w-full gap-5'>
                         <button
-                            onClick={() => {handleEditRole()
-                                            onConfirm()}}
+                            onClick={() => {handleEditRole()}}
                             className='bg-verdesito hover:bg-verde text-white p-3 rounded-xl'>
                             Confirmar
                         </button>
