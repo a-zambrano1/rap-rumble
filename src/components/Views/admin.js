@@ -13,6 +13,7 @@ import ModalEdit from '../Utils/ModalEdit'
 import ModalDelete from '../Utils/ModalDelete'
 import { notify } from '../Utils/notify'
 import { set } from 'firebase/database'
+import { useNavigate } from 'react-router-dom'
 
 
 function Admin() {
@@ -28,6 +29,7 @@ function Admin() {
   const [isModalDays, setIsModalDays] = useState(false)
   const [dayIds, setDayIds] = useState([]);
 
+  const navigate = useNavigate();
 
   const handleCancel = () => {
     notify("error", "No se ha podido añadir el miembro. Inténtalo de nuevo.")
@@ -48,7 +50,7 @@ function Admin() {
     notify("error", "No se modificó ninguna jornada")
     setIsModalDays(false)
   }
-  
+
   const GetMembersByCompetition = async (competition) => {
     let result = await getMembersByCompetitionApi(competition)
     setMembers(result)
@@ -93,7 +95,12 @@ function Admin() {
   const handleDayConfirm = async () => {
     notify("success", "Jornada editada correctamente.")
     setIsModalDays(false)
-  } 
+  }
+
+  const logout = () => {
+    localStorage.clear();
+    navigate('/');
+  }
 
   const fetchDayIds = async () => {
     const days = []
@@ -112,17 +119,17 @@ function Admin() {
 
   const handleDeleteConfirm = async () => {
     try {
-    const deleted = await DeleteMember(selectedMember)
-    if (deleted.message === 'member deleted') {
-      notify("success", "Miembro eliminado correctamente.")
-    } else {
-      notify("error", "No se ha podido eliminar el miembro. Inténtalo de nuevo.")
+      const deleted = await DeleteMember(selectedMember)
+      if (deleted.message === 'member deleted') {
+        notify("success", "Miembro eliminado correctamente.")
+      } else {
+        notify("error", "No se ha podido eliminar el miembro. Inténtalo de nuevo.")
+      }
+    } catch (error) {
+      console.error(error)
     }
-  } catch (error) {
-    console.error(error)
+    setIsModalDelete(false)
   }
-  setIsModalDelete(false)
-}
 
   useEffect(() => {
     fetchDayIdsFromApi()
@@ -151,8 +158,9 @@ function Admin() {
                   key={index}
                   className={`w-8 h-8 rounded-full border-2 ${dayIds[1] === 1 ? 'bg-gray-500' : dayIds[0] === 1 ? 'bg-green-500' : ''}`}
                   disabled={dayIds[1] === 1}
-                  onClick={() => {setSelectedDay(index + 1)
-                                  handleDays()
+                  onClick={() => {
+                    setSelectedDay(index + 1)
+                    handleDays()
                   }}
                 >
                   {index + 1}
@@ -164,7 +172,7 @@ function Admin() {
           <div className='flex flex-col justify-center items-center gap-5'>
             <h1 className='text-[30px] text-[#3d405b] text-center'>Miembros de UdeRap</h1>
             <hr class="w-4/5 h-0.5 bg-[#000000]" />
-            <div className="flex w-full justify-center h-96" style={{overflow: "auto"}}>
+            <div className="flex w-full justify-center h-96" style={{ overflow: "auto" }}>
               {members != null ?
                 <table className='table-auto'>
                   <thead className='sticky top-0 bg-white'>
@@ -175,35 +183,35 @@ function Admin() {
                     </tr>
                   </thead>
                   <tbody>
-                  {members.sort((a, b) => {
+                    {members.sort((a, b) => {
                       const aAka = a.aka || "";
                       const bAka = b.aka || "";
                       return aAka.localeCompare(bAka);
                     }).map((member, index) => (
-                        <tr key={index}>
-                          <td className='p-2'>{member.aka}</td>
-                          <td className='p-2'>{member.roleName}</td>
-                          <td className='flex justify-center p-2 gap-3'>
+                      <tr key={index}>
+                        <td className='p-2'>{member.aka}</td>
+                        <td className='p-2'>{member.roleName}</td>
+                        <td className='flex justify-center p-2 gap-3'>
                           <button className='bg-verdesito hover:bg-verde text-white font-bold py-2 px-2 rounded' onClick={() => {
                             setSelectedMember(member.idMember)
                             setSelectedUser(member.idUser)
                             handleSubmitEdit()
                           }}>Editar</button>
-                            {member.idRole === 1 ? null : <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded'
-                              onClick={() => {
-                                setSelectedMember(member.idMember)
-                                handleDelete()
-                              }}>Eliminar</button>}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
+                          {member.idRole === 1 ? null : <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded'
+                            onClick={() => {
+                              setSelectedMember(member.idMember)
+                              handleDelete()
+                            }}>Eliminar</button>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
                   <ModalEdit isOpen={isModalEditOpen} onCancel={handleCancelEdit} onConfirm={handleEditConfirm} member={selectedMember} user={selectedUser}>Editar Miembro</ModalEdit>
                 </table>
                 : <p>Cargando miembros...</p>}
             </div>
             <ModalDelete isOpen={isModalDelete} onConfirm={handleDeleteConfirm} onCancel={handleCancelDelete}>
-                ¿Estás seguro que deseas eliminar a este miembro de la competencia?
+              ¿Estás seguro que deseas eliminar a este miembro de la competencia?
             </ModalDelete>
             <hr class="w-4/5 h-0.5 bg-[#000000]" />
             <div>
@@ -215,6 +223,9 @@ function Admin() {
               <ModalAdmin isOpen={isModalOpen} onCancel={handleCancel} onConfirm={handleAddConfirm}>
                 Añadir Miembros
               </ModalAdmin>
+              <button onClick={logout} className="rounded-xl bg-verde hover:bg-verdesito text-white p-3 h-auto">
+                <span>Cerrar sesión</span>
+              </button>
             </div>
           </div>
         </section>

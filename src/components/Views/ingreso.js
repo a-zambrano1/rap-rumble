@@ -7,10 +7,14 @@ import { notify } from '../Utils/notify'
 import { loginVerificationApi } from "../../Services/APIS/LoginVerification"
 import { getUserMemberApi } from "../../Services/APIS/getUserMember"
 import { useEffect } from "react"
+import { useContext } from "react"
+import { AuthContext } from "../Utils/authContext"
+
 
 function Ingreso() {
 
   const navigate = useNavigate()
+  const { isAuthenticated } = useContext(AuthContext);
 
   const getUserByEmail = async (email) => {
     let result = await getUserByEmailApi(email)
@@ -42,6 +46,7 @@ function Ingreso() {
           return
         }
         localStorage.setItem('idRole', userMember[0].idRole)
+        localStorage.setItem('idMember', userMember[1].idUserMember);
         if (userMember[1]) {
           localStorage.setItem('idRole2', userMember[1].idRole);
         } else {
@@ -56,10 +61,10 @@ function Ingreso() {
   }
   useEffect(() => {
     let idRole = localStorage.getItem('idRole')
-    if (idRole) {
+    if (idRole && !isAuthenticated) {
       navigate('/welcome')
     }
-  }, [navigate])
+  }, [navigate, isAuthenticated])
 
   return (
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill' }}>

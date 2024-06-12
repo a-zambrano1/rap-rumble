@@ -52,7 +52,7 @@ const Welcome = () => {
                 </section>
                 <section>
                     <button onClick={logout} className="rounded-xl bg-verde hover:bg-verdesito text-white p-3 h-auto">
-                        <span>Salir</span>
+                        <span>Cerrar sesión</span>
                     </button>
                 </section>
             </div>
