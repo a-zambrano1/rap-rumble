@@ -57,6 +57,7 @@ function Registro() {
         } else {
           notify("success", "Usuario registrado correctamente")
           createUser(form.values)
+          localStorage.clear()
           console.log(form.values)
           navigate(`/`)
         }
