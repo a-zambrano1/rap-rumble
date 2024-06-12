@@ -11,13 +11,14 @@ export const createVoteApi = async (props) => {
           },
           body: JSON.stringify({
             idCompetition: 1,
-            idMC1: props.aka,
-            idMC2: props.aka,
-            idJudge: props.aka,
-            idDay: props.aka,
-            scoreMC1: props.aka,
-            scoreMC2: props.aka,
-            winner: props.aka,
+            idMC1: props.idMC1,
+            idMC2: props.idMC2,
+            idJudge: props.idJudge,
+            idDay: props.idDay,
+            scoreMC1: props.scoreMC1,
+            scoreMC2: props.scoreMC2,
+            winner: props.winner,
+            replik: props.replik
           }),
         })
         return response.json()

@@ -20,10 +20,12 @@ const Welcome = () => {
 
     const [idRole, setIdRole] = useState('0')
     const [idRole2, setIdRole2] = useState('0')
+    const [akaShown, setAkaShown] = useState('user')
 
     useEffect(() => {
         let idRole = localStorage.getItem('idRole')
         let idRole2 = localStorage.getItem('idRole2')
+        setAkaShown(localStorage.getItem('aka'))
         if (idRole) {
             setIdRole(idRole)
             setIdRole2(idRole2)
@@ -40,7 +42,7 @@ const Welcome = () => {
         <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill' }}>
             <div className='flex flex-col min-w-[25%] gap-9 my-auto py-7 items-center border-4 rounded-3xl border-black bg-white'>
                 <section className='flex justify-center w-full px-7'>
-                    <h1 className='flex text-[50px]'>Hola User! Qué quieres hacer hoy?</h1>
+                    <h1 className='flex text-[50px]'>Hola {akaShown}! Qué quieres hacer hoy?</h1>
                 </section>
                 <section className='flex justify-evenly gap-4'>
                     {(idRole === '2' || idRole2 === '2')  && <button id='juezButton' onClick={() => navigate('/inicio_batalla')} className='flex flex-col items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-4/12' >Ingresar como Juez

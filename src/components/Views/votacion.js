@@ -16,20 +16,65 @@ import Checkbox from '@mui/material/Checkbox'
 import { formatox6, formatoRespuesta } from '../Utils/VoteJsons'
 import ModalVote from '../Utils/ModalVotacion'
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { createVoteApi } from '../../Services/APIS/CreateVote'
+import { getDayIdApi } from '../../Services/APIS/GetDayId'
+import { get } from 'firebase/database'
 
 const steps = ['Temáticas', 'Random Mode', 'Minutos a Sangre', '4x4 Libre', 'Réplica', 'Resultados'];
 
 const Votacion = () => {
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [mc1pts, setMc1pts] = useState(0)
+  const [mc2pts, setMc2pts] = useState(0)
+  const [winnerMc, setWinnerMc] = useState(null)
+  const [replik, setReplik] = useState(0)
+  const [selectedButton, setSelectedButton] = useState(null)
+  const [isButtonClicked, setIsButtonClicked] = useState(false)
+  const [dayId, setDayId] = useState(0)
+  const formatoTematica = JSON.parse(JSON.stringify(formatox6))
+  const formatoRandom = JSON.parse(JSON.stringify(formatox6))
+  const formatoLibre = JSON.parse(JSON.stringify(formatox6))
+  const formatoMinutoIda = JSON.parse(JSON.stringify(formatox6))
+  const formatoMinutoVuelta = JSON.parse(JSON.stringify(formatox6))
+  const formatoReplica = JSON.parse(JSON.stringify(formatox6))
+  const formatoRespuestas = JSON.parse(JSON.stringify(formatoRespuesta))
+
+  const [tematicaValues, setTematicaValues] = useState(formatoTematica)
+  const [randomValues, setRandomValues] = useState(formatoRandom)
+  const [libreValues, setLibreValues] = useState(formatoLibre)
+  const [minutoIda, setMinutoIda] = useState(formatoMinutoIda)
+  const [minutoVuelta, setMinutoVuelta] = useState(formatoMinutoVuelta)
+  const [respuestas, setRespuestas] = useState(formatoRespuestas)
+
+  const [replicaValues, setReplicaValues] = useState(formatoReplica)
+  const replicaMc1 = Object.values(replicaValues.mc1).reduce((a, b) => a + b, 0)
+  const replicaMc2 = Object.values(replicaValues.mc2).reduce((a, b) => a + b, 0)
+
+  const CreateVote = async (props) => {
+    let result = await createVoteApi(props)
+    console.log(result)
+    return result
+  }
+  
+  const GetDayId = async (competition, numberDay) => {
+    let result = await getDayIdApi(competition, numberDay)
+    setDayId(result.id)
+    return result
+  }
 
   const handleConfirm = () => {
-    //logica para enviar la votacion a la base de datos
+    try {
+      CreateVote(outForm.values)
+    } catch (error) {
+      console.log(error)
+      notify("error", "Error al crear la votación.")
+      setIsModalOpen(false)
+    }
     setIsModalOpen(false)
-    //si pasa la validación se enviará la votación y volverá a la pagina de inicio de batalla
     notify("success", "Votación enviada correctamente")
     console.log(outForm.values)
-    //navigate('/inicio_batalla')
+    navigate('/inicio_batalla')
   }
 
   const handleCancel = () => {
@@ -38,6 +83,8 @@ const Votacion = () => {
   }
 
   const handleSubmit = () => {
+    console.log(outForm.values)
+    setReplik(replik)
     setIsModalOpen(true)
   }
 
@@ -69,8 +116,6 @@ const Votacion = () => {
 
   const form = useForm({
     initialValues: {
-      juez: "",
-      lugar: "",
       mc1: "MC 1",
       mc2: "MC 2"
     },
@@ -78,40 +123,16 @@ const Votacion = () => {
 
   const outForm = useForm({
     initialValues: {
-      mc1: "",
-      mc2: "",
-      juez: "",
-      lugar: "",
-      mc1pts: 0,
-      mc2pts: 0,
-      winner: ""
+      idMC1: 0,
+      idMC2: 0,
+      idJudge: 0,
+      idDay: 0,
+      scoreMC1: 0,
+      scoreMC2: 0,
+      winner: 0,
+      replik: 0
     },
   })
-
-  const [mc1pts, setMc1pts] = useState(0)
-  const [mc2pts, setMc2pts] = useState(0)
-  const [winnerMc, setWinnerMc] = useState(null);
-  const [selectedButton, setSelectedButton] = useState(null)
-  const [isButtonClicked, setIsButtonClicked] = useState(false)
-
-  const formatoTematica = JSON.parse(JSON.stringify(formatox6))
-  const formatoRandom = JSON.parse(JSON.stringify(formatox6))
-  const formatoLibre = JSON.parse(JSON.stringify(formatox6))
-  const formatoMinutoIda = JSON.parse(JSON.stringify(formatox6))
-  const formatoMinutoVuelta = JSON.parse(JSON.stringify(formatox6))
-  const formatoReplica = JSON.parse(JSON.stringify(formatox6))
-  const formatoRespuestas = JSON.parse(JSON.stringify(formatoRespuesta))
-
-  const [tematicaValues, setTematicaValues] = useState(formatoTematica)
-  const [randomValues, setRandomValues] = useState(formatoRandom)
-  const [libreValues, setLibreValues] = useState(formatoLibre)
-  const [minutoIda, setMinutoIda] = useState(formatoMinutoIda)
-  const [minutoVuelta, setMinutoVuelta] = useState(formatoMinutoVuelta)
-  const [respuestas, setRespuestas] = useState(formatoRespuestas)
-
-  const [replicaValues, setReplicaValues] = useState(formatoReplica)
-  const replicaMc1 = Object.values(replicaValues.mc1).reduce((a, b) => a + b, 0);
-  const replicaMc2 = Object.values(replicaValues.mc2).reduce((a, b) => a + b, 0);
 
   const handlePatron = (mc, button, newValue, formatValues, setFormatValues) => {
     let newPatron = { ...formatValues }
@@ -130,34 +151,37 @@ const Votacion = () => {
   }
 
   const handlePuntaje = (mc, value) => {
-    mc === 1 ? setMc1pts(mc1pts + value) : setMc2pts(mc2pts + value)
+    mc === 1 ? (outForm.setFieldValue('scoreMC1', mc1pts + value)) : (outForm.setFieldValue('scoreMC2', mc2pts + value))
+    mc === 1 ? (setMc1pts(mc1pts + value)) : setMc2pts(mc2pts + value)
+
   }
 
   useEffect(() => {
     if (location.state !== null) {
       notify("success", "Datos cargados correctamente")
       let data = location.state.data
+      GetDayId('1', data.day)
+      outForm.setValues({
+        idJudge: data.juez,
+        idMC1: data.idmc1,
+        idMC2: data.idmc2
+      })
       form.setValues({
-        juez: data.juez,
-        lugar: data.lugar,
         mc1: data.mc1,
         mc2: data.mc2
       })
+      console.log(data)
     }
     // eslint-disable-next-line
   }, [location.state])
 
   useEffect(() => {
     outForm.setValues({
-      mc1: form.values.mc1,
-      mc2: form.values.mc2,
-      juez: form.values.juez,
-      lugar: form.values.lugar,
-      mc1pts: mc1pts,
-      mc2pts: mc2pts,
-      winner: winnerMc
+      winner: winnerMc,
+      replik: replik,
+      idDay: dayId
     })
-  }, [form.values.mc1, form.values.mc2, form.values.juez, form.values.lugar, mc1pts, mc2pts, outForm, winnerMc, selectedButton])
+  }, [winnerMc, selectedButton, replik, dayId])
 
 
 
@@ -193,12 +217,12 @@ const Votacion = () => {
                 <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
                     {[1, 2, 3].map((num) => (
-                      <VoteButton count={tematicaValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, tematicaValues, setTematicaValues)} />
+                      <VoteButton key={`mc1-button${num}`} count={tematicaValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, tematicaValues, setTematicaValues)} />
                     ))}
                   </div>
                   <div className='flex flex-col gap-1'>
                     {[1, 2, 3].map((num) => (
-                      <VoteButton count={tematicaValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, tematicaValues, setTematicaValues)} />
+                      <VoteButton key={`mc2-button${num}`} count={tematicaValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, tematicaValues, setTematicaValues)} />
                     ))}
                   </div>
                 </div>
@@ -208,12 +232,12 @@ const Votacion = () => {
                 <div className='flex flex-row gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
                     {[4, 5, 6].map((num) => (
-                      <VoteButton count={tematicaValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, tematicaValues, setTematicaValues)} />
+                      <VoteButton key={`mc1-button${num}`} count={tematicaValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, tematicaValues, setTematicaValues)} />
                     ))}
                   </div>
                   <div className='flex flex-col gap-1'>
                     {[4, 5, 6].map((num) => (
-                      <VoteButton count={tematicaValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, tematicaValues, setTematicaValues)} />
+                      <VoteButton key={`mc2-button${num}`} count={tematicaValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, tematicaValues, setTematicaValues)} />
                     ))}
                   </div>
                 </div>
@@ -232,12 +256,12 @@ const Votacion = () => {
                 <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
                     {[1, 2, 3, 4, 5, 6].map((num) => (
-                      <VoteButton count={randomValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, randomValues, setRandomValues)} />
+                      <VoteButton key={`mc1-button${num}`} count={randomValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, randomValues, setRandomValues)} />
                     ))}
                   </div>
                   <div className='flex flex-col gap-1'>
                     {[1, 2, 3, 4, 5, 6].map((num) => (
-                      <VoteButton count={randomValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, randomValues, setRandomValues)} />
+                      <VoteButton key={`mc2-button${num}`} count={randomValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, randomValues, setRandomValues)} />
                     ))}
                   </div>
                 </div>
@@ -263,14 +287,14 @@ const Votacion = () => {
                           <div className={slide === 0 ? 'flex gap-2 items-center justify-around' : "hidden"}>
                             <div className='flex flex-col gap-1'>
                               {[1, 2, 3, 4, 5, 6].map((num) => (
-                                <VoteButton count={minutoIda.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, minutoIda, setMinutoIda)} />
+                                <VoteButton key={`mc1-button${num}`} count={minutoIda.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, minutoIda, setMinutoIda)} />
                               ))}
                             </div>
                             <div className='flex flex-col'>
                               {
                                 [1, 2, 3, 4, 5, 6].map((num) => (
                                   <div className='flex flex-row'>
-                                    <VoteButton count={minutoIda.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, minutoIda, setMinutoIda)} />
+                                    <VoteButton key={`mc2-button${num}`} count={minutoIda.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, minutoIda, setMinutoIda)} />
                                     <Checkbox {...label} checked={
                                       respuestas.mc2[`check${num}`]
                                     } onClick={(e) => handlePointsRespuesta(2, num, e.target.checked, setRespuestas)} />
@@ -282,14 +306,14 @@ const Votacion = () => {
                           <div className={slide === 1 ? 'flex gap-2 items-center justify-around' : "hidden"}>
                             <div className='flex flex-col gap-1'>
                               {[1, 2, 3, 4, 5, 6].map((num) => (
-                                <VoteButton count={minutoVuelta.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, minutoVuelta, setMinutoVuelta)} />
+                                <VoteButton key={`mc1-button${num}`} count={minutoVuelta.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, minutoVuelta, setMinutoVuelta)} />
                               ))}
                             </div>
                             <div className='flex flex-col'>
                               {
                                 [1, 2, 3, 4, 5, 6].map((num) => (
                                   <div className='flex flex-row'>
-                                    <VoteButton count={minutoVuelta.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, minutoVuelta, setMinutoVuelta)} />
+                                    <VoteButton key={`mc2-button${num}`} count={minutoVuelta.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, minutoVuelta, setMinutoVuelta)} />
                                     <Checkbox {...label} checked={
                                       respuestas.mc1[`check${num}`]
                                     } onClick={(e) => handlePointsRespuesta(1, num, e.target.checked, setRespuestas)} />
@@ -323,14 +347,14 @@ const Votacion = () => {
                   <div className='flex flex-col gap-1'>
                     {
                       [1, 2, 3, 4, 5, 6].map((num) => (
-                        <VoteButton count={libreValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, libreValues, setLibreValues)} />
+                        <VoteButton key={`mc1-button${num}`} count={libreValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, libreValues, setLibreValues)} />
                       ))
                     }
                   </div>
                   <div className='flex flex-col gap-1'>
                     {
                       [1, 2, 3, 4, 5, 6].map((num) => (
-                        <VoteButton count={libreValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, libreValues, setLibreValues)} />
+                        <VoteButton key={`mc2-button${num}`} count={libreValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, libreValues, setLibreValues)} />
                       ))
                     }
                   </div>
@@ -349,12 +373,12 @@ const Votacion = () => {
                 <div className='flex gap-2 items-center justify-around'>
                   <div className='flex flex-col gap-1'>
                     {[1, 2, 3, 4].map((num) => (
-                      <VoteButton count={replicaValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, replicaValues, setReplicaValues)} />
+                      <VoteButton key={`mc1-button${num}`} count={replicaValues.mc1[`button${num}`]} onVote={(e) => handlePatron(1, num, e, replicaValues, setReplicaValues)} />
                     ))}
                   </div>
                   <div className='flex flex-col gap-1'>
                     {[1, 2, 3, 4].map((num) => (
-                      <VoteButton count={replicaValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, replicaValues, setReplicaValues)} />
+                      <VoteButton key={`mc2-button${num}`} count={replicaValues.mc2[`button${num}`]} onVote={(e) => handlePatron(2, num, e, replicaValues, setReplicaValues)} />
                     ))}
                   </div>
                 </div>
@@ -376,7 +400,7 @@ const Votacion = () => {
                 <button
                   className={`flex flex-col items-center rounded-3xl border-2 w-auto ${selectedButton === 'mc1' ? 'bg-verde text-white' : 'border-black'}`}
                   onClick={() => {
-                    setWinnerMc(form.values.mc1)
+                    setWinnerMc(outForm.values.idMC1)
                     setSelectedButton('mc1')
                     setIsButtonClicked(false)
                   }}
@@ -386,17 +410,21 @@ const Votacion = () => {
                 <button
                   className={`flex flex-col items-center rounded-3xl border-2 w-auto ${selectedButton === 'mc2' ? 'bg-verde text-white' : 'border-black'}`}
                   onClick={() => {
-                    setWinnerMc(form.values.mc2)
+                    setWinnerMc(outForm.values.idMC2)
                     setSelectedButton('mc2')
                     setIsButtonClicked(false)
-                  }}
-                >
-                  <span className='text-3xl m-3'>{form.values.mc2}</span>
-                </button>
-              </div>
-              <button className={`rounded-xl text-white p-3 w-3/5 h-auto ${winnerMc === null || isButtonClicked ? 'bg-slate-500' : 'bg-verde hover:bg-verdesito'} `}
-                disabled={winnerMc === null || isButtonClicked}
-                onClick={() => {
+                    }}
+                  >
+                    <span className='text-3xl m-3'>{form.values.mc2}</span>
+                  </button>
+                  </div>
+                  <div className='flex gap-5'>
+                  <label className='text-3xl'>Ganador por réplica? </label>
+                  <input className="flex scale-150" type="checkbox" checked={replik === 1}onChange={(e) => setReplik(e.target.checked ? 1 : 0)}/>
+                  </div>
+                  <button className={`rounded-xl text-white p-3 w-3/5 h-auto ${winnerMc === null || isButtonClicked ? 'bg-slate-500' : 'bg-verde hover:bg-verdesito'} `}
+                  disabled={winnerMc === null || isButtonClicked}
+                  onClick={() => {
                   handleSubmit()
                   setIsButtonClicked(true)
                   setSelectedButton(null)

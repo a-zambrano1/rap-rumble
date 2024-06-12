@@ -18,7 +18,6 @@ import { useNavigate } from 'react-router-dom'
 
 function Admin() {
 
-  const [akaShown, setAkaShown] = useState('user')
   const [members, setMembers] = useState([])
   const [selectedUser, setSelectedUser] = useState()
   const [selectedMember, setSelectedMember] = useState()
@@ -114,7 +113,6 @@ function Admin() {
   const fetchDayIdsFromApi = async () => {
     const result = await fetchDayIds()
     setDayIds(result)
-    console.log(result)
   }
 
   const handleDeleteConfirm = async () => {
@@ -137,7 +135,6 @@ function Admin() {
 
   useEffect(() => {
     GetMembersByCompetition("1")
-    setAkaShown('Admin')
   }
     , [isModalOpen, isModalEditOpen, isModalDelete, handleEditConfirm])
 
@@ -146,7 +143,7 @@ function Admin() {
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill' }}>
       <div className='flex flex-col min-w-[25%] max-w-[90%] gap-9 my-auto py-7 items-center border-4 rounded-3xl border-black bg-white'>
         <section className='flex flex-col items-center w-full px-7'>
-          <h1 className='flex text-[50px]'>¡Hola {akaShown}!</h1>
+          <h1 className='flex text-[50px]'>¡Hola Admin!</h1>
           <h1 className='flex text-[18px]'>Bienvenido al Panel de Administración</h1>
         </section>
         <section className='flex flex-col items-center w-full px-2 gap-5'>

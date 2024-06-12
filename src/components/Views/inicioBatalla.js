@@ -8,6 +8,7 @@ import { notify } from '../Utils/notify'
 import { useNavigate } from 'react-router-dom'
 import { getCompetitorsApi } from '../../Services/APIS/GetCompetitors'
 import { getDayIdApi } from '../../Services/APIS/GetDayId'
+import { get } from 'firebase/database'
 
 
 const InicioBatalla = () => {
@@ -15,9 +16,11 @@ const InicioBatalla = () => {
   const navigate = useNavigate()
   const [users, setUsers] = useState([])
   const [dayIds, setDayIds] = useState([])
+  const [judgeId, setJudgeId] = useState('')
 
   const getCompetitors = async (competition) => {
     let result = await getCompetitorsApi(competition)
+    console.log(result)
     setUsers(result)
   }
 
@@ -26,27 +29,41 @@ const InicioBatalla = () => {
     return result
   }
 
+  const getJudgeId = async () => {
+    let result = localStorage.getItem('idRole')
+    let result2 = localStorage.getItem('idRole2')
+    if (result === '2') {
+      setJudgeId(localStorage.getItem('memberId'))
+    } else if (result2 === '2'){
+      setJudgeId(localStorage.getItem('memberId2'))
+    }
+  }
+
   const fetchDayIds = async () => {
     const days = []
     for (let i = 1; i <= 15; i++) {
       const result = await GetDayId("1", i)
       days.push([result.enable, result.finish])
     }
-    console.log(days)
     return days
   }
 
   const form = useForm({
     initialValues: {
       juez: "",
-      lugar: "",
+      day: "",
       mc1: "",
       mc2: "",
+      idmc1: "",
+      idmc2: ""
     },
-  });
+  })
 
   const handleSubmit = () => {
-    if (form.values.lugar === "" || form.values.mc1 === "" || form.values.mc2 === "") {
+    console.log(form.values)
+    if (form.values.juez === "") {
+      notify("warning", "Ocurrio un error, por favor intenta de nuevo")
+    } else if (form.values.day === "" || form.values.mc1 === "" || form.values.mc2 === "") {
       notify("warning", "Por favor llena todos los campos")
     } else if (form.values.mc1 === form.values.mc2) {
       notify("warning", "Los MCs no pueden ser el mismo")
@@ -65,6 +82,7 @@ const InicioBatalla = () => {
 
     fetchDayIdsFromApi()
     getCompetitors("1")
+    getJudgeId()
   }, [])
 
   return (
@@ -84,7 +102,8 @@ const InicioBatalla = () => {
           <div className="flex flex-col items-center p-5 gap-4">
             <select className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto" 
               id="day"
-              placeholder="Número de Jornada">
+              placeholder="Número de Jornada"
+              onChange={(e) => {form.setFieldValue('day', e.target.value); form.setFieldValue('juez', judgeId)}}>
               <option value="" disabled selected>Jornada</option>
               {(dayIds).map((dayId, index) => (
                 dayId[0] === 1 ?  
@@ -94,23 +113,34 @@ const InicioBatalla = () => {
                 : null
               ))}
             </select>
-            <input className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto "
-              id="lugar"
-              placeholder="Localización de la Jornada"
-              onChange={(e) => form.setFieldValue('lugar', e.target.value)}
-            />
-            <select className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto" id="mc1" onChange={(e) => form.setFieldValue('mc1', e.target.value)}>
-              <option value="" disabled selected>MC #1</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.aka}
-                </option>
-              ))}
+            <select
+                className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto"
+                id="mc1"
+                onChange={(e) => {
+                  const [aka, idMember] = e.target.value.split('|');
+                  form.setFieldValue('mc1', aka);
+                  form.setFieldValue('idmc1', idMember);
+                }}
+              >
+                <option value="" disabled selected>MC #1</option>
+                {users.map((user) => (
+                  <option key={user.id} value={`${user.aka}|${user.idMember}`}>
+                    {user.aka}
+                  </option>
+                ))}
             </select>
-            <select className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto" id="mc1" onChange={(e) => form.setFieldValue('mc2', e.target.value)}>
+            <select
+              className="rounded-xl w-4/5 border-2 border-gray-500 p-3 h-auto"
+              id="mc1"
+              onChange={(e) => {
+                const [aka, idMember] = e.target.value.split('|')
+                form.setFieldValue('mc2', aka)
+                form.setFieldValue('idmc2', idMember)
+              }}
+            >
               <option value="" disabled selected>MC #2</option>
               {users.map((user) => (
-                <option key={user.id} value={user.id}>
+                <option key={user.id} value={`${user.aka}|${user.idMember}`}>
                   {user.aka}
                 </option>
               ))}
