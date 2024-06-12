@@ -8,6 +8,7 @@ import { notify } from '../Utils/notify'
 import { useNavigate } from 'react-router-dom'
 import { getCompetitorsApi } from '../../Services/APIS/GetCompetitors'
 import { getDayIdApi } from '../../Services/APIS/GetDayId'
+import { getJudgeVotesApi } from '../../Services/APIS/GetJudgeVotes'
 import { get } from 'firebase/database'
 
 
@@ -18,10 +19,15 @@ const InicioBatalla = () => {
   const [dayIds, setDayIds] = useState([])
   const [judgeId, setJudgeId] = useState('')
 
-  const getCompetitors = async (competition) => {
+  const GetCompetitors = async (competition) => {
     let result = await getCompetitorsApi(competition)
     console.log(result)
     setUsers(result)
+  }
+
+  const GetJudgeVotes = async (competition, idJudge, idMC1, idMC2) => {
+    let result = await getJudgeVotesApi(competition, idJudge, idMC1, idMC2)
+    return result
   }
 
   const GetDayId = async (competition, numberDay) => {
@@ -29,7 +35,7 @@ const InicioBatalla = () => {
     return result
   }
 
-  const getJudgeId = async () => {
+  const GetJudgeId = async () => {
     let result = localStorage.getItem('idRole')
     let result2 = localStorage.getItem('idRole2')
     if (result === '2') {
@@ -59,7 +65,7 @@ const InicioBatalla = () => {
     },
   })
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log(form.values)
     if (form.values.juez === "") {
       notify("warning", "Ocurrio un error, por favor intenta de nuevo")
@@ -69,7 +75,18 @@ const InicioBatalla = () => {
       notify("warning", "Los MCs no pueden ser el mismo")
     }
     else {
-      console.log(form.values)
+      try {
+      const votes = await GetJudgeVotes("1", form.values.juez, form.values.idmc1, form.values.idmc2)
+      console.log(votes)
+        if (votes.length > 0) {
+          notify("warning", "Ya has votado por esta batalla")
+          return
+        }
+      } catch (error) {
+        console.log(error)
+        notify("warning", "Ocurrio un error, por favor intenta de nuevo")
+        return
+      }
       navigate(`/votacion`, { state: { data: form.values } })
     }
   }
@@ -81,8 +98,8 @@ const InicioBatalla = () => {
     }
 
     fetchDayIdsFromApi()
-    getCompetitors("1")
-    getJudgeId()
+    GetCompetitors("1")
+    GetJudgeId()
   }, [])
 
   return (

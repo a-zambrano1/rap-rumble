@@ -45,15 +45,16 @@ function Ingreso() {
           notify("info", "Aún no se le ha asignado un rol")
           return
         }
+        localStorage.setItem('idMember', userMember[0].idUserMember)
+
         localStorage.setItem('idRole', userMember[0].idRole)
-        localStorage.setItem('idMember', userMember[1].idUserMember);
         localStorage.setItem('memberId', userMember[0].id)
         localStorage.setItem('aka', apiEmail.aka)
         if (userMember[1]) {
           localStorage.setItem('idRole2', userMember[1].idRole)
           localStorage.setItem('memberId2', userMember[1].id)
         } else {
-          localStorage.setItem('idRole2', '0');
+          localStorage.setItem('idRole2', '0')
         }
         notify("success", "Bienvenido")
         navigate('/welcome')

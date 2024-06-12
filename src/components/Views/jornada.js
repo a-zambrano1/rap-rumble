@@ -4,6 +4,7 @@ import { Batalla } from '../Utils/Batalla.js'
 import { useNavigate } from 'react-router-dom'
 import ModalResult from '../Utils/ModalResultado.js'
 import { useLocation } from 'react-router-dom'
+import { getDayIdApi } from '../../Services/APIS/GetDayId'
 
 
 const Jornada = () => {

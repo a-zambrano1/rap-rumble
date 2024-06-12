@@ -16,16 +16,16 @@ const images = {
 };
 
 function Batalla(props) {
-  const [imageUrls, setImageUrls] = useState(null);
-  const { mc1, mc2, pts1, pts2, winner, clicked } = props;
-  const imagesUrls = ["ospina.jpeg", "file.jpg"];
+  const [imageUrls, setImageUrls] = useState(null)
+  const { mc1, mc2, pts1, pts2, winner, clicked } = props
+  const imagesUrls = ["ospina.jpeg", "file.jpg"]
 
   useEffect(() => {
     const fetchImage = async () => {
       const urls = await Promise.all(
         imagesUrls.map(async (image) => {
-          const imageRef = ref(storage, `gs://rap-rumble.appspot.com/${image}`);
-          const urlImage = await getDownloadURL(imageRef);
+          const imageRef = ref(storage, `gs://rap-rumble.appspot.com/${image}`)
+          const urlImage = await getDownloadURL(imageRef)
           return urlImage;
         })
       );
