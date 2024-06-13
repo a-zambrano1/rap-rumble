@@ -65,16 +65,24 @@ const handleSubmit = () => {
                 <th className='p-2'>PTB</th>
               </tr>
             </thead>
-              <tbody>
-                {users.sort((a, b) => b.ptb - a.ptb).map((user, index) => (
-                  <tr key={index}>
-                    <td className='p-2 text-center'>{index + 1}</td>
-                    <td className='p-2 text-center'>{user.aka}</td>
-                    <td className='p-2 text-center'>{user.score}</td>
-                    <td className='p-2 text-center'>{user.ptb}</td>
-                  </tr>
-                ))}
-              </tbody>
+            <tbody>
+              {users.sort((a, b) => {
+                // First, sort by ptb
+                const ptbDifference = b.ptb - a.ptb;
+                if (ptbDifference !== 0) {
+                  return ptbDifference;
+                }
+                // If ptb is the same, sort by score
+                return b.score - a.score;
+              }).map((user, index) => (
+                <tr key={index}>
+                  <td className='p-2 text-center'>{index + 1}</td>
+                  <td className='p-2 text-center'>{user.aka}</td>
+                  <td className='p-2 text-center'>{user.score}</td>
+                  <td className='p-2 text-center'>{user.ptb}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
           : <div key={2} className='flex self-center'>Waiting for fetch data...</div>}
         </div>
