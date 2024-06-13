@@ -23,8 +23,8 @@ const getCompetitors = async (competition) => {
 }
 
 const GetNumberOfDays = async (competition) => {
-  let result = await getNumberOfDaysApi(competition) || 1
-  setDays(result.daysCount)
+  let result = await getNumberOfDaysApi(competition)
+  setDays(result.daysCount || 3)
 }
 
 useEffect(() => {
@@ -34,8 +34,7 @@ useEffect(() => {
 , [])
 
 const handleSubmit = () => {
-  console.log(days)
-  navigate(`/jornada`, { state: { data: 3 } })
+  navigate(`/jornada`, { state: { data: days } })
 }
 
   return (

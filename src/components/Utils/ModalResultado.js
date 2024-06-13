@@ -21,7 +21,7 @@ const ModalResult = ({ isOpen, onCancel, batallaData }) => {
     }
 
     useEffect(() => {
-        const fetchVotes = async () => {
+        const fetchVotos = async () => {
             if (!batallaData) {
                 return
             }
@@ -30,7 +30,7 @@ const ModalResult = ({ isOpen, onCancel, batallaData }) => {
             console.log(result)
             console.log("chi")
         }
-        fetchVotes()
+        fetchVotos()
         console.log("cha")
     }, [batallaData])
 
@@ -51,8 +51,8 @@ const ModalResult = ({ isOpen, onCancel, batallaData }) => {
                         <div key={index} className='flex flex-col w-full '>
                         <h1 className='text-3xl text-center'>Juez # {index + 1}</h1>
                         <div className='flex justify-between mx-10  p-3'>
-                            <span className={`text-3xl ${votes[index].winner === votes[index].idMC1 ? "text-verde" : "text-red-500"}`}>{votes[index].scoreMC1}</span>
-                            <span className={`text-3xl ${votes[index].winner === votes[index].idMC2 ? "text-verde" : "text-red-500"}`}>{votes[index].scoreMC2}</span>
+                            <span className="text-3xl">{votes[index].scoreMC1}</span>
+                            <span className="text-3xl">{votes[index].scoreMC2}</span>
                         </div>
                         < hr className='w-full border-2 m-2' />
                         </div>
@@ -63,8 +63,8 @@ const ModalResult = ({ isOpen, onCancel, batallaData }) => {
                 <div className='flex flex-col w-full gap-5'>
                     <h1 className='text-3xl text-center'>Resultado Total</h1>
                     <div className='flex justify-between mx-10 p-1'>
-                        <span className={`text-3xl ${batallaData.winner === batallaData.mc1 ? "text-verde" : "text-red-500"}`}>{batallaData.pts1}</span>
-                        <span className={`text-3xl ${batallaData.winner === batallaData.mc2 ? "text-verde" : "text-red-500"}`}>{batallaData.pts2}</span>
+                        <span className="text-3xl">{batallaData.pts1}</span>
+                        <span className="text-3xl">{batallaData.pts2}</span>
                     </div>
                 </div>
             </div>
