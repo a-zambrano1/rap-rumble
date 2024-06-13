@@ -3,9 +3,12 @@ import bg from'../../media/bg.png'
 import { Batalla } from '../Utils/Batalla.js'
 import { useNavigate } from 'react-router-dom'
 import ModalResult from '../Utils/ModalResultado.js'
+import ListaBatallas from '../Utils/ListaBatallas.js'
 import { useLocation } from 'react-router-dom'
 import { getDayIdApi } from '../../Services/APIS/GetDayId'
-
+import { getNumberOfDaysApi } from '../../Services/APIS/GetNumberOfDays'
+import { getDayVotesApi } from '../../Services/APIS/GetDayVotes'
+import { set } from 'firebase/database'
 
 const Jornada = () => {
 
@@ -13,12 +16,56 @@ const Jornada = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedBatalla, setSelectedBatalla] = useState(null)
   const [day, setDay] = useState()
+  const [dayIds, setDayIds] = useState([])
+  const [votes, setVotes] = useState([])
   const [selectedDay, setSelectedDay] = useState()
+  const [selectedLocation, setSelectedLocation] = useState()
+  const [batallas, setBatallas] = useState({})
   const location = useLocation()
 
   const handleChange = (event) => {
-    setSelectedDay(event.target.value);
-  };
+    setSelectedDay(event.target.value)
+    setSelectedLocation(dayIds[event.target.value - 1][0].location)
+  }
+
+  const GetDayId = async (competition, numberDay) => {
+    let result = await getDayIdApi(competition, numberDay)
+    return result
+  }
+
+  const fetchDayIds = async () => {
+    const days = []
+    for (let i = 1; i <= 15; i++) {
+      const result = await GetDayId("1", i)
+      days.push([result])
+    }
+    return days
+  }
+
+  const fetchDayIdsFromApi = async () => {
+    const result = await fetchDayIds()
+    setDayIds(result)
+  }
+
+  const GetDayVotes = async (competition, idDay) => {
+    let result = await getDayVotesApi(competition, idDay)
+    return result
+  }
+
+  const fetchVotes = async () => {
+    const preVotes = []
+    for (let i = 0; i < day; i++) {
+      const dia = dayIds[i][0].id
+      const result = await GetDayVotes("1", dia)
+      preVotes.push(result)
+    }
+    return preVotes
+  }
+
+  const fetchVotesFromApi = async () => {
+    const result = await fetchVotes()
+    setVotes(result)
+  }
 
   const onCancel = () => {
     console.log('cancelado')
@@ -34,14 +81,24 @@ const Jornada = () => {
     let data = location.state.data
     setDay(data)
     setSelectedDay(data)
-  }, [location.state])
+  }, [])
 
-  const batallas = {
-    1: [<Batalla mc1="leoteo" mc2="dkarlos" pts1="86" pts2="85" winner="leoteo" clicked={() => handleModal({mc1: "leoteo", mc2: "dkarlos", pts1: 86, pts2: 85})}/>, <Batalla />], // Batallas for day 1
-    2: [<Batalla mc1="uderap" mc2="micro" pts1="100" pts2="10" winner="uderap" clicked={() => handleModal({mc1: "uderap", mc2: "micro", pts1: 100, pts2: 10})}/>], // Batallas for day 2
-    3: [<Batalla />, <Batalla mc1="leoteo" mc2="dkarlos" pts1="10" pts2="90" winner="dkarlos" clicked={() => handleModal({mc1: "leoteo", mc2: "dkarlos", pts1: 10, pts2: 90})}/>], // Batallas for day 3
-    // Add more days here
-  };
+  useEffect(() => {
+    fetchDayIdsFromApi()
+    fetchVotesFromApi()
+  }, [day, selectedDay])
+
+  useEffect(() => {
+    if (votes.length === 0) {
+      return
+    } else {
+    const batallas = {}
+    for (let i = 0; i < day; i++) {
+      batallas[i + 1] = [<ListaBatallas votes={votes} idx={i} handleModal={handleModal} />]
+    }
+    setBatallas(batallas)
+  }}, [votes])
+
 
   return (
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill'}}>
@@ -57,17 +114,16 @@ const Jornada = () => {
               ))}
              </select>
             </h1>
-            <span className='text-[15px]'>LUGAR: {}</span>
-            <span className='text-[15px]'>JUECES: {}</span>
+            <span className='text-[15px]'>LUGAR: {selectedLocation}</span>
           </div>
           <button onClick={()=> navigate('/')} className='flex rounded-full p-5  h-1/4 self-center bg-verde hover:bg-verdesito'>X</button>
         </section>
         <div className='flex flex-col gap-8 w-full'>
-          {batallas[selectedDay] && batallas[selectedDay].map((Batalla, index) => (
-            <React.Fragment key={index}>
-              {Batalla}
-            </React.Fragment>
-          ))}
+        {batallas?.[selectedDay]?.map((Batalla, index) => (
+          <React.Fragment key={index}>
+            {Batalla}
+          </React.Fragment>
+        ))}
         </div>
         <ModalResult isOpen={isModalOpen} onCancel={onCancel} batallaData={selectedBatalla}/>
       </div>

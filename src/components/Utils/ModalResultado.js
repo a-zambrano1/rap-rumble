@@ -1,5 +1,5 @@
 import React from 'react';
-// a modal that shows a result of a battle between two mc's and shows the votes from all the judges that could be from 3 to 5 judges
+import { getBattleVotesApi } from '../../Services/APIS/GetBattleVotes'
 
 const ModalResult = ({ isOpen, onCancel, batallaData }) => {
     if (!isOpen) {
@@ -19,7 +19,7 @@ const ModalResult = ({ isOpen, onCancel, batallaData }) => {
             <div>
                 <h1>Resultado de la batalla</h1>
                 {batallaData && (
-                <div className="flex flex-row justify-between">
+                <div className="flex justify-between">
                     <div className="flex flex-col text-center"><span>{batallaData.mc1}</span>
                     <span>{batallaData.pts1}</span></div>
                     <div  className="flex flex-col text-center"><span>{batallaData.mc2}</span>

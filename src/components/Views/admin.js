@@ -211,16 +211,16 @@ function Admin() {
               ¿Estás seguro que deseas eliminar a este miembro de la competencia?
             </ModalDelete>
             <hr class="w-4/5 h-0.5 bg-[#000000]" />
-            <div>
+            <div className='flex gap-5 w-full justify-around'>
               <button
                 onClick={() => {
                   handleSubmit()
                 }}
-                className='flex items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-10/12 p-2' >Añadir Miembros</button>
+                className='flex items-center rounded-3xl hover:bg-verdesito bg-verde text-white w-auto h-auto p-3' >Añadir Miembros</button>
               <ModalAdmin isOpen={isModalOpen} onCancel={handleCancel} onConfirm={handleAddConfirm}>
                 Añadir Miembros
               </ModalAdmin>
-              <button onClick={logout} className="rounded-xl bg-verde hover:bg-verdesito text-white p-3 h-auto">
+              <button onClick={logout} className="rounded-3xl bg-verde hover:bg-verdesito text-white p-3 w-auto h-auto">
                 <span>Cerrar sesión</span>
               </button>
             </div>
