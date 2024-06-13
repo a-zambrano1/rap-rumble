@@ -25,7 +25,7 @@ const Jornada = () => {
 
   const handleChange = (event) => {
     setSelectedDay(event.target.value)
-    setSelectedLocation(dayIds[event.target.value - 1][0].location)
+    setSelectedLocation(dayIds[event.target.value - 1][0].location || 'Desconocido')
   }
 
   const GetDayId = async (competition, numberDay) => {
@@ -55,6 +55,10 @@ const Jornada = () => {
   const fetchVotes = async () => {
     const preVotes = []
     for (let i = 0; i < day; i++) {
+      console.log("alo")
+      console.log(dayIds)
+      console.log(dayIds[i][0].id)
+      console.log("hola")
       const dia = dayIds[i][0].id
       const result = await GetDayVotes("1", dia)
       preVotes.push(result)
@@ -84,12 +88,17 @@ const Jornada = () => {
   }, [])
 
   useEffect(() => {
+    if (!day) {
+      return
+    }
     fetchDayIdsFromApi()
     fetchVotesFromApi()
   }, [day, selectedDay])
 
   useEffect(() => {
-    if (votes.length === 0) {
+    if (!votes) {
+      return
+    }else if (votes.length === 0) {
       return
     } else {
     const batallas = {}
@@ -114,7 +123,7 @@ const Jornada = () => {
               ))}
              </select>
             </h1>
-            <span className='text-[15px]'>LUGAR: {selectedLocation}</span>
+            <span className='text-[15px]'>LUGAR: {selectedLocation || 'Desconocido'}</span>
           </div>
           <button onClick={()=> navigate('/')} className='flex rounded-full p-5  h-1/4 self-center bg-verde hover:bg-verdesito'>X</button>
         </section>
