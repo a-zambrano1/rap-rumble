@@ -9,11 +9,11 @@ const FirebaseConfig = {
     messagingSenderId: "105",
     appId: "1:105:web:5",
     measurementId: "G-5",
-    anotherToken: "92ba97dd-a40b-4bcb-b706-48d2bf3274e7"
+    anotherToken: "e10c9eaa-2917-4735-b7a5-b859a4cd5967"
 };
 
 const app = initializeApp(FirebaseConfig);
 
-const storage = getStorage(app);
+const storagePictures = getStorage(app);
 
-export { storage, ref, getDownloadURL };
+export { storagePictures, ref, getDownloadURL };

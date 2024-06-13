@@ -5,34 +5,80 @@ import dkarlos from "../../media/dkarlos.png";
 import vs from "../../media/vs.png";
 import micro from "../../media/micro.png";
 import uderap from "../../media/uderap.png";
-import { storage, ref, getDownloadURL } from "./FirebaseConfig";
+import { storagePictures, ref, getDownloadURL } from "./FirebaseConfig";
+import { getMemberByIdApi } from "../../Services/APIS/GetMemberById";
+import { getUserByIdApi } from "../../Services/APIS/GetUserById";
 
-// Create an object that maps names to images
-const images = {
-  leoteo,
-  dkarlos,
-  micro,
-  uderap,
-};
+
 
 function Batalla(props) {
-  const [imageUrls, setImageUrls] = useState(null)
-  const { mc1, mc2, pts1, pts2, winner, clicked } = props
-  const imagesUrls = ["ospina.jpeg", "file.jpg"]
+  const { mc1, mc2, pts1, pts2, winner, clicked } = props;
+  const [imageUrls, setImageUrls] = useState([]);
+
+  const [member1, setMember1] = useState(null);
+  const [member2, setMember2] = useState(null);
+
+  const [user1, setUser1] = useState(
+    {
+      id: 0,
+      aka: "Cargando...",
+      profilePicture: "",
+    }
+  );
+  const [user2, setUser2] = useState({
+    id: 0,
+    aka: "Cargando...",
+    profilePicture: "",
+  });
 
   useEffect(() => {
-    const fetchImage = async () => {
-      const urls = await Promise.all(
-        imagesUrls.map(async (image) => {
-          const imageRef = ref(storage, `gs://rap-rumble.appspot.com/${image}`)
-          const urlImage = await getDownloadURL(imageRef)
-          return urlImage;
-        })
-      );
-      setImageUrls(urls);
-    };
-    fetchImage();
-  }, []);
+    console.log("mc1", mc1)
+    if (mc1 && mc2) {
+      getMembers();
+    }
+  }
+    , [mc1, mc2]);
+
+  useEffect(() => {
+    if (user1 && user2) {
+      fetchImageUrls();
+    }
+  }, [user1, user2]);
+
+  const getMembers = async () => {
+
+    await getMemberByIdApi(mc1).then(async (data) => {
+      setMember1(data);
+      await getUserByIdApi(data[0].idUserMember).then((data) => {
+        setUser1(data);
+        console.log("data1", data);
+      });
+    });
+    await getMemberByIdApi(mc2).then(async (data) => {
+      setMember2(data);
+      await getUserByIdApi(data[0].idUserMember).then((data) => {
+        setUser2(data);
+        console.log("data2", data);
+      });
+    });
+  }
+
+  
+  const fetchImageUrls = async () => {
+    const urls = []; 
+    if (user1 && user1.profilePicture) {
+      const imageRef = ref(storagePictures, `${user1.profilePicture}`);
+      const url = await getDownloadURL(imageRef);
+      urls.push(url);
+    }
+    if (user2 && user2.profilePicture) {
+      const imageRef = ref(storagePictures, `${user2.profilePicture}`);
+      const url = await getDownloadURL(imageRef);
+      urls.push(url);
+    }
+    setImageUrls(urls);
+  }
+
 
   return (
     <div
@@ -54,7 +100,7 @@ function Batalla(props) {
                 <p>Cargando imagen...</p>
               )}
             </div>
-            <span className="text-[20px]">{mc1}</span>
+            <span className="text-[20px]">{user1.aka || ''}</span>
           </div>
           <img
             src={vs}
@@ -74,22 +120,20 @@ function Batalla(props) {
                 <p>Cargando imagen...</p>
               )}
             </div>
-            <span className="text-[20px] ">{mc2}</span>
+            <span className="text-[20px] ">{user2.aka || ''}</span>
           </div>
         </div>
       </div>
       <div className="h-full w-full flex">
         <div
-          className={`flex w-1/2 justify-center gap-5 my-auto py-3 border-2 rounded-3xl ${
-            winner === mc1 ? "border-verde" : "border-red-500"
-          }`}
+          className={`flex w-1/2 justify-center gap-5 my-auto py-3 border-2 rounded-3xl ${winner === mc1 ? "border-verde" : "border-red-500"
+            }`}
         >
           <span>{pts1}</span>
         </div>
         <div
-          className={`flex w-1/2 justify-center gap-5 my-auto py-3 border-2 rounded-3xl ${
-            winner === mc2 ? "border-verde" : "border-red-500"
-          }`}
+          className={`flex w-1/2 justify-center gap-5 my-auto py-3 border-2 rounded-3xl ${winner === mc2 ? "border-verde" : "border-red-500"
+            }`}
         >
           <span>{pts2}</span>
         </div>

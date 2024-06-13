@@ -35,7 +35,7 @@ const Jornada = () => {
 
   const fetchDayIds = async () => {
     const days = []
-    for (let i = 1; i <= 15; i++) {
+    for (let i = 1; i <= day; i++) {
       const result = await GetDayId("1", i)
       days.push([result])
     }
