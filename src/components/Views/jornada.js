@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import bg from'../../media/bg.png'
+import bg from '../../media/bg.png'
 import { Batalla } from '../Utils/Batalla.js'
 import { useNavigate } from 'react-router-dom'
 import ModalResult from '../Utils/ModalResultado.js'
@@ -55,10 +55,6 @@ const Jornada = () => {
   const fetchVotes = async () => {
     const preVotes = []
     for (let i = 0; i < day; i++) {
-      console.log("alo")
-      console.log(dayIds)
-      console.log(dayIds[i][0].id)
-      console.log("hola")
       const dia = dayIds[i][0].id
       const result = await GetDayVotes("1", dia)
       preVotes.push(result)
@@ -92,49 +88,54 @@ const Jornada = () => {
       return
     }
     fetchDayIdsFromApi()
-    fetchVotesFromApi()
+
   }, [day, selectedDay])
+
+  useEffect (() => {
+    if (dayIds.length !== 0) fetchVotesFromApi()
+  }, [dayIds])
 
   useEffect(() => {
     if (!votes) {
       return
-    }else if (votes.length === 0) {
+    } else if (votes.length === 0) {
       return
     } else {
-    const batallas = {}
-    for (let i = 0; i < day; i++) {
-      batallas[i + 1] = [<ListaBatallas votes={votes} idx={i} handleModal={handleModal} />]
+      const batallas = {}
+      for (let i = 0; i < day; i++) {
+        batallas[i + 1] = [<ListaBatallas votes={votes} idx={i} handleModal={handleModal} />]
+      }
+      setBatallas(batallas)
     }
-    setBatallas(batallas)
-  }}, [votes])
+  }, [votes])
 
 
   return (
-    <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill'}}>
-      <div className='flex flex-col min-w-[25%] max-h-[90%] gap-10 my-auto py-7 px-6 items-center border-4 rounded-3xl border-black bg-white' style={{overflow: "auto", scrollbarWidth: 'thin', borderRadius: '10px',}}>
+    <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill' }}>
+      <div className='flex flex-col min-w-[25%] max-h-[90%] gap-10 my-auto py-7 px-6 items-center border-4 rounded-3xl border-black bg-white' style={{ overflow: "auto", scrollbarWidth: 'thin', borderRadius: '10px', }}>
         <section className='flex justify-between w-full bg-white'>
           <div className='flex flex-col'>
             <h1 className='flex items-center text-[50px]'>Jornada #
-             <select id='selectJornada' className='text-[40px] border w-auto' value={selectedDay} onChange={handleChange}>
-              {[...Array(day).keys()].map((_, index) => (
-                <option key={index} value={index + 1}>
-                  {index + 1}
-                </option>
-              ))}
-             </select>
+              <select id='selectJornada' className='text-[40px] border w-auto' value={selectedDay} onChange={handleChange}>
+                {[...Array(day).keys()].map((_, index) => (
+                  <option key={index} value={index + 1}>
+                    {index + 1}
+                  </option>
+                ))}
+              </select>
             </h1>
             <span className='text-[15px]'>LUGAR: {selectedLocation || 'Desconocido'}</span>
           </div>
-          <button onClick={()=> navigate('/')} className='flex rounded-full p-5  h-1/4 self-center bg-verde hover:bg-verdesito'>X</button>
+          <button onClick={() => navigate('/')} className='flex rounded-full p-5  h-1/4 self-center bg-verde hover:bg-verdesito'>X</button>
         </section>
         <div className='flex flex-col gap-8 w-full'>
-        {batallas?.[selectedDay]?.map((Batalla, index) => (
-          <React.Fragment key={index}>
-            {Batalla}
-          </React.Fragment>
-        ))}
+          {batallas?.[selectedDay]?.map((Batalla, index) => (
+            <React.Fragment key={index}>
+              {Batalla}
+            </React.Fragment>
+          ))}
         </div>
-        <ModalResult isOpen={isModalOpen} onCancel={onCancel} batallaData={selectedBatalla}/>
+        <ModalResult isOpen={isModalOpen} onCancel={onCancel} batallaData={selectedBatalla} />
       </div>
     </div>
   )

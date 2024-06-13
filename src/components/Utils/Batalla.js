@@ -8,6 +8,7 @@ import uderap from "../../media/uderap.png";
 import { storagePictures, ref, getDownloadURL } from "./FirebaseConfig";
 import { getMemberByIdApi } from "../../Services/APIS/GetMemberById";
 import { getUserByIdApi } from "../../Services/APIS/GetUserById";
+import xRaper from "../../media/x.png"
 
 
 
@@ -32,7 +33,6 @@ function Batalla(props) {
   });
 
   useEffect(() => {
-    console.log("mc1", mc1)
     if (mc1 && mc2) {
       getMembers();
     }
@@ -51,14 +51,12 @@ function Batalla(props) {
       setMember1(data);
       await getUserByIdApi(data[0].idUserMember).then((data) => {
         setUser1(data);
-        console.log("data1", data);
       });
     });
     await getMemberByIdApi(mc2).then(async (data) => {
       setMember2(data);
       await getUserByIdApi(data[0].idUserMember).then((data) => {
         setUser2(data);
-        console.log("data2", data);
       });
     });
   }
@@ -91,8 +89,8 @@ function Batalla(props) {
             <div className="w-72 h-72 overflow-hidden rounded-3xl">
               {imageUrls ? (
                 <img
-                  className="w-full "
-                  src={imageUrls[0]}
+                  className="w-full h-full"
+                  src={imageUrls[0] || xRaper}
                   alt={mc1}
                   style={{ objectFit: "cover" }}
                 />
@@ -111,8 +109,8 @@ function Batalla(props) {
             <div className="w-72 h-72 overflow-hidden rounded-3xl">
               {imageUrls ? (
                 <img
-                  className="w-full "
-                  src={imageUrls[1]}
+                  className="w-full h-full"
+                  src={imageUrls[1]  || xRaper}
                   alt={mc2}
                   style={{ objectFit: "cover" }}
                 />

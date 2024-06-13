@@ -4,7 +4,6 @@ import { Batalla } from '../Utils/Batalla';
 const ListaBatallas = ({ votes, idx, handleModal }) => {
   // Check if votes[idx] is an array before mapping
   const content = Array.isArray(votes[idx]) ? votes[idx].map((vote, index) => {
-    console.log("oelo aqui estoy");
     return (
       <Batalla
         key={index}
