@@ -17,7 +17,8 @@ const ListaBatallas = ({ votes, idx, handleModal }) => {
           mc1: vote ? vote.mc1 : '', 
           mc2: vote ? vote.mc2 : '', 
           pts1: vote ? vote.totalScoreMC1 : 0, 
-          pts2: vote ? vote.totalScoreMC2 : 0
+          pts2: vote ? vote.totalScoreMC2 : 0,
+          winner: vote ? vote.winner : ''
         })}
       />
     );
