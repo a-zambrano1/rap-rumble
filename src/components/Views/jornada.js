@@ -115,8 +115,8 @@ const Jornada = () => {
       <div className='flex flex-col min-w-[25%] max-h-[90%] gap-10 my-auto py-7 px-6 items-center border-4 rounded-3xl border-black bg-white' style={{ overflow: "auto", scrollbarWidth: 'thin', borderRadius: '10px', }}>
         <section className='flex justify-between w-full bg-white'>
           <div className='flex flex-col'>
-            <h1 className='flex items-center text-[50px]'>Jornada #
-              <select id='selectJornada' className='text-[40px] border w-auto' value={selectedDay} onChange={handleChange}>
+          <h1 className='flex items-center text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>Jornada #
+              <select id='selectJornada' className='text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl border w-auto' value={selectedDay} onChange={handleChange}>
                 {[...Array(day).keys()].map((_, index) => (
                   <option key={index} value={index + 1}>
                     {index + 1}
