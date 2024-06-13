@@ -1,4 +1,4 @@
-import "../../styles/App.css";
+import "./styles/App.css";
 import Ingreso from "./components/Views/ingreso.js";
 import Votacion from "./components/Views/votacion.js";
 import Jornada from "./components/Views/jornada.js";
