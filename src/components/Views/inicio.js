@@ -39,7 +39,7 @@ const handleSubmit = () => {
 
   return (
     <div className='flex justify-center h-screen' style={{ backgroundImage: `url(${bg})`, backgroundSize: 'fill'}}>
-      <div className='flex flex-col min-w-[25%] gap-5 my-auto py-7 items-center border-4 rounded-3xl border-black bg-white'>
+      <div className='flex flex-col min-w-[25%] max-h-screen gap-5 my-auto py-7 items-center border-4 rounded-3xl border-black bg-white' style={{ overflow: "auto", scrollbarWidth: 'thin', borderRadius: '10px',}}>
       <a href="https://www.instagram.com/_uderap/" target="_blank" rel="noopener noreferrer">
         <div style={{ backgroundImage: `url(${banner})`, backgroundSize: 'cover'}} className='flex rounded-3xl hover:scale-110'>
           <img className='p-2' src={uderap} alt="uderap"/>
