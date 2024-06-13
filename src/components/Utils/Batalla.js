@@ -6,7 +6,7 @@ import vs from "../../media/vs.png";
 import micro from "../../media/micro.png";
 import uderap from "../../media/uderap.png";
 import { storagePictures, ref, getDownloadURL } from "./FirebaseConfig";
-import { getMemberByIdApi } from "../../Services/APIS/GetMemberById";
+import { getMemberByIdApi } from "../../Services/APIS/getMemberById";
 import { getUserByIdApi } from "../../Services/APIS/GetUserById";
 import xRaper from "../../media/x.png"
 
